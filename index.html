@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Lab — Sid's Home Server</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --border: #30363d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent: #58a6ff;
+            --accent-green: #3fb950;
+            --accent-orange: #d29922;
+            --accent-purple: #a371f7;
+            --accent-red: #f85149;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero .subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Navigation */
+        .nav {
+            position: sticky;
+            top: 0;
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 0;
+            z-index: 100;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        /* Sections */
+        .section {
+            padding: 60px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+
+        /* Service Cards */
+        .service-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .service-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .service-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .service-badge {
+            background: var(--bg-tertiary);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .service-description {
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+        }
+
+        .problem-solution {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .ps-box {
+            background: var(--bg-tertiary);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent);
+        }
+
+        .ps-box.solution {
+            border-left-color: var(--accent-green);
+        }
+
+        .ps-box h4 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+
+        .ps-box p {
+            font-size: 0.95rem;
+        }
+
+        /* Diagrams */
+        .diagram-container {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 30px;
+            margin: 25px 0;
+            overflow-x: auto;
+        }
+
+        .diagram-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Code Blocks */
+        .code-block {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .code-header {
+            background: var(--bg-primary);
+            padding: 10px 15px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        pre[class*="language-"] {
+            margin: 0;
+            padding: 20px;
+            background: var(--bg-tertiary);
+            font-size: 0.85rem;
+            max-height: 400px;
+            overflow-x: auto;
+        }
+
+        /* ASCII Art */
+        .ascii-art {
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            line-height: 1.4;
+            background: var(--bg-tertiary);
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            white-space: pre;
+            margin: 20px 0;
+        }
+
+        /* Grid Layouts */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .three-col {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        /* Container Grid */
+        .container-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .container-item {
+            background: var(--bg-tertiary);
+            padding: 15px 20px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .container-name {
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .container-port {
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            background: var(--bg-secondary);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        /* Feature List */
+        .feature-list {
+            list-style: none;
+            margin: 15px 0;
+        }
+
+        .feature-list li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            color: var(--text-secondary);
+        }
+
+        .feature-list li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--accent-green);
+        }
+
+        /* Links */
+        .external-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-top: 15px;
+        }
+
+        .external-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .footer a {
+            color: var(--accent);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .stats { gap: 30px; }
+            .stat-value { font-size: 2rem; }
+            .problem-solution { grid-template-columns: 1fr; }
+            .two-col { grid-template-columns: 1fr; }
+            .three-col { grid-template-columns: 1fr; }
+            .section { padding: 40px 0; }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hero -->
+    <div class="hero">
+        <div class="container">
+            <h1>The Lab</h1>
+            <p class="subtitle">Self-hosted AI, automation & media — powered by a 2013 Intel i5 and a lot of ambition</p>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-value">11</div>
+                    <div class="stat-label">Containers</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">7</div>
+                    <div class="stat-label">Services</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">24/7</div>
+                    <div class="stat-label">Uptime</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">~0.16</div>
+                    <div class="stat-label">CPU Load</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container">
+            <div class="nav-links">
+                <a href="#infrastructure">Infrastructure</a>
+                <a href="#mini-llm">mini-llm</a>
+                <a href="#crypto">crypto_dashboard</a>
+                <a href="#indiastock">IndiaStock</a>
+                <a href="#automation">Automation</a>
+                <a href="#media">Media Stack</a>
+                <a href="#how-built">How It Was Built</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Infrastructure Overview -->
+    <section id="infrastructure" class="section">
+        <div class="container">
+            <h2 class="section-title">🏠 Home Infrastructure</h2>
+            <p class="section-subtitle">The foundation everything runs on</p>
+
+            <div class="service-card">
+                <h3 class="service-title">Network Architecture</h3>
+                <p class="service-description">
+                    Intel Core i5-3470 @ 3.20GHz, 31GB RAM, ~0.16 load. Docker-based homelab with Traefik reverse proxy, Cloudflare tunnels, and Portainer management.
+                </p>
+
+                <div class="diagram-title">Full Stack Architecture</div>
+                <div class="diagram-container">
+                    <pre class="ascii-art">
+Internet ──→ Cloudflare Tunnel ──→ Traefik (:8080) ──→ Docker Network
+                                                            │
+                    ┌────────────────────────────────────────┼────────────────────────────────────────┐
+                    │                                        │                                        │
+               ┌────┴────┐   ┌────────────┐   ┌──────────┴───┐   ┌──────────┐   ┌────────────┐   ┌──┴───┐
+               │  mini   │   │   crypto    │   │   indiastock  │   │    n8n   │   │   python   │   │ plex │
+               │ -llm    │   │ -dashboard  │   │    :5001     │   │  :5678   │   │    -kg     │   │:32400│
+               │ :8501   │   │   :5000     │   │              │   │          │   │   :5071    │   │      │
+               └─────────┘   └────────────┘   └──────────────┘   └──────────┘   └────────────┘   └──────┘
+                    │                                        │                                        │
+                    │           ┌────────────┐   ┌──────────┐   │   ┌───────────┐   ┌──────────────┐   │
+                    └──────────→│  portainer │   │photoprism│   └──→│audiobook- │   │  traefik     │   │
+                                 │   :9000    │   │  :2342   │       │  shelf    │   │  dashboard   │   │
+                                 └────────────┘   └──────────┘       │   :80     │   │   :8080      │   │
+                                                                  └───────────┘   └──────────────┘
+                    </pre>
+                </div>
+
+                <div class="diagram-title">Docker Containers</div>
+                <div class="container-grid">
+                    <div class="container-item">
+                        <span class="container-name">traefik</span>
+                        <span class="container-port">:8080</span>
+                    </div>
+                    <div class="container-item">
+                        <span class="container-name">portainer</span>
+                        <span class="container-port">:9000</span>
+                    </div>
+                    <div class="container-item">
+                        <span class="container-name">plex</span>
+                        <span class="container-port">:32400</span>
+                    </div>
+                    <div class="container-item">
+                        <span class="container-name">n8n</span>
+                        <span class="container-port">:5678</span>
+                    </div>
+                    <div class="container-item">
+                        <span class="container-name">mini-llm-app</span>
+                        <span class="container-port">:8501</span>
+                    </div>
+                    <div class="container-item">
+                        <span class="container-name">crypto-dashboard</span>
+                        <span class="container-port">:5000</span>
+                    </div>
+                    <div class="container-item">
+                        <span class="container-name">indiastock</span>
+                        <span class="container-port">:5001</span>
+                    </div>
+                    <div class="container-item">
+                        <span class="container-name">python-kg</span>
+                        <span class="container-port">:5071</span>
+                    </div>
+                    <div class="container-item">
+                        <span class="container-name">photoprism</span>
+                        <span class="container-port">:2342</span>
+                    </div>
+                    <div class="container-item">
+                        <span class="container-name">audiobookshelf</span>
+                        <span class="container-port">:80</span>
+                    </div>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">Key Tech Stack</div>
+<pre><code class="language-bash"># Docker Compose (Traefik + Cloudflare Tunnel)
+services:
+  traefik:
+    image: traefik:v3.0
+    ports:
+      - "8080:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - CF_API_TOKEN=${CF_API_TOKEN}
+
+  portainer:
+    image: portainer/portainer-ce
+    ports:
+      - "9000:9000"
+
+  n8n:
+    image: n8nio/n8n
+    ports:
+      - "5678:5678"</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- mini-llm -->
+    <section id="mini-llm" class="section">
+        <div class="container">
+            <h2 class="section-title">🧠 mini-llm</h2>
+            <p class="section-subtitle">Fine-tuned legal Q&A bot — 4 layers, 1024 dimensions, 16 heads</p>
+
+            <div class="service-card">
+                <div class="service-header">
+                    <h3 class="service-title">The Legal Eagle</h3>
+                    <span class="service-badge">AI/ML • PyTorch • Streamlit</span>
+                </div>
+
+                <div class="problem-solution">
+                    <div class="ps-box">
+                        <h4>Problem</h4>
+                        <p>Free, accurate UK legal information isn't available without paying solicitor rates for basic queries.</p>
+                    </div>
+                    <div class="ps-box solution">
+                        <h4>Solution</h4>
+                        <p>Fine-tuned small GPT + intent classifier + 1032 stock answers = reliable legal Q&A at zero marginal cost.</p>
+                    </div>
+                </div>
+
+                <div class="diagram-title">Training Pipeline</div>
+                <div class="diagram-container">
+                    <div class="mermaid">
+graph LR
+    A["📄 Legal Documents<br/>372 examples"] --> B["🔬 Chunking &<br/>Formatting"]
+    B --> C["⚡ SFT Training<br/>4-layer GPT"]
+    C --> D["📊 Eval<br/>rep_ratio, loss"]
+    D --> E{"Collapsed?"}
+    E -->|Yes| F["🔒 Stock Fallback<br/>Architecture"]
+    E -->|No| G["✅ v8_clean<br/>Checkpoint"]
+    F --> H["🚀 Deploy<br/>Streamlit"]
+    G --> H
+                    </div>
+                </div>
+
+                <div class="diagram-title">Inference Flow</div>
+                <div class="diagram-container">
+                    <div class="mermaid">
+graph TD
+    A["💬 User Query"] --> B["🎯 Intent Classifier<br/>252 classes"]
+    B --> C{"Match?"}
+    C -->|Stock Answer| D["📦 Return<br/>Pre-written Answer"]
+    C -->|Model Needed| E["🤖 Fine-tuned<br/>4-layer GPT"]
+    E --> F["⚙️ Rep Penalty 1.05<br/>Prevents Collapse"]
+    F --> G["✅ Response"]
+    D --> G
+                    </div>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">Intent Classifier Handler Chain (streamlit_app.py)</div>
+<pre><code class="language-python">HANDLER_PATTERNS = [
+    (r'\bwhat(?:'s| is)\b', 'what_is'),
+    (r'\bwhat are\b', 'what_are'),
+    (r'\bdescribe\b', 'describe'),
+    (r'\bexplain\b', 'explain'),
+    (r'\bdefine\b', 'define'),
+    (r'\bmeaning of\b', 'meaning_of'),
+    (r'\bhow does .* work\b', 'how_does_x_work'),
+    (r'\bwhat(?:'s| is) .*\b', 'whats_x'),
+    (r'\bwhat happens if\b', 'what_happens_if'),
+    (r'\bwhen can\b', 'when_can'),
+    (r'\bcan .*\b', 'can_x'),
+    (r'\b.* vs .*\b', 'vs_x'),
+    (r'\b.* versus .*\b', 'versus_x'),
+]
+
+def match_intent(query):
+    query_lower = query.lower().strip()
+    for pattern, intent in HANDLER_PATTERNS:
+        if re.search(pattern, query_lower):
+            return intent
+    return 'general'</code></pre>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">Model Architecture (mini_model.py)</div>
+<pre><code class="language-python">class MiniGPT(nn.Module):
+    def __init__(self, vocab_size, dim=1024, heads=16, layers=4):
+        self.embed = nn.Embedding(vocab_size, dim)
+        self.layers = nn.ModuleList([TransformerBlock(dim, heads) for _ in range(layers)])
+        self.norm = nn.LayerNorm(dim)
+        self.head = nn.Linear(dim, vocab_size, bias=False)
+
+    def forward(self, x):
+        x = self.embed(x)
+        for layer in self.layers:
+            x = layer(x)
+        return self.head(self.norm(x))</code></pre>
+                </div>
+
+                <ul class="feature-list">
+                    <li>4-layer transformer (1024 dim, 16 heads)</li>
+                    <li>252 intent classes — all dummies resolved (updated 2026-04-03)</li>
+                    <li>1032 stock answers — zero fall-through for legal queries</li>
+                    <li>Repetition penalty 1.05 — prevents collapse artifacts</li>
+                    <li>v8_clean checkpoint collapsed; production uses stock fallback</li>
+                    <li>Training data expanded +13 examples (trademark, copyright, patent, property, tort)</li>
+                </ul>
+
+                <a href="http://192.168.1.247:8501" class="external-link">
+                    🔗 Live Demo <span style="color: var(--text-secondary)">http://192.168.1.247:8501</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- crypto_dashboard_multi -->
+    <section id="crypto" class="section">
+        <div class="container">
+            <h2 class="section-title">📈 crypto_dashboard_multi</h2>
+            <p class="section-subtitle">LSTM price predictions + RAG-powered document Q&A</p>
+
+            <div class="service-card">
+                <div class="service-header">
+                    <h3 class="service-title">The Crypto Oracle</h3>
+                    <span class="service-badge">AI/ML • Dash • PyTorch • Knowledge Graph</span>
+                </div>
+
+                <div class="problem-solution">
+                    <div class="ps-box">
+                        <h4>Problem</h4>
+                        <p>Crypto markets are volatile; making sense of price movements + finding answers in documents (PDFs, sheets) is time-consuming.</p>
+                    </div>
+                    <div class="ps-box solution">
+                        <h4>Solution</h4>
+                        <p>LSTM predictions for BTC/ETH/BNB + RAG playground with knowledge graph retrieval from uploaded PDFs.</p>
+                    </div>
+                </div>
+
+                <div class="diagram-title">Crypto Prediction Pipeline</div>
+                <div class="diagram-container">
+                    <div class="mermaid">
+graph LR
+    A["📊 Price Data<br/>BTC, ETH, BNB"] --> B["🔄 Preprocessing<br/>Normalization"]
+    B --> C["🧠 LSTM Model<br/>PyTorch"]
+    C --> D["📈 Predictions<br/>Confidence Scores"]
+    D --> E["📊 Dashboard<br/>Plotly Dash"]
+                    </div>
+                </div>
+
+                <div class="diagram-title">RAG Playground Architecture</div>
+                <div class="diagram-container">
+                    <div class="mermaid">
+graph TD
+    A["📄 PDF Upload<br/>n8n webhook"] --> B["🐍 python-kg<br/>Container :5071"]
+    B --> C["✂️ Chunking"]
+    C --> D["🔢 Embedding<br/>Vector Store"]
+    D --> E["🕸️ Knowledge Graph<br/>Build from chunks"]
+    E --> F["❓ User Question"]
+    F --> G["🔍 Retrieve<br/>KG query"]
+    G --> H["🤖 Generate<br/>Context + LLM"]
+    H --> I["✅ Answer"]
+    I --> J["📝 Log to<br/>Google Sheets"]
+                    </div>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">LSTM Training (lstm_train.py)</div>
+<pre><code class="language-python">class LSTMModel(nn.Module):
+    def __init__(self, input_size=1, hidden_size=128, num_layers=2):
+        super().__init__()
+        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
+        self.fc = nn.Linear(hidden_size, 1)
+
+    def forward(self, x):
+        out, _ = self.lstm(x)
+        return self.fc(out[:, -1, :])
+
+# Training
+model = LSTMModel()
+criterion = nn.MSELoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+for epoch in range(100):
+    pred = model(X_train)
+    loss = criterion(pred, y_train)
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()</code></pre>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">KG Generation API (python-kg)</div>
+<pre><code class="language-python">@app.route('/get_or_generate_kg', methods=['POST'])
+def get_or_generate_kg():
+    file_id = request.json.get('file_id')
+    cache_key = hashlib.md5(file_id.encode()).hexdigest()
+
+    # Check cache first
+    cache_file = f"/home/sd22750/python_kg/cache/kg/{cache_key}.json"
+    if os.path.exists(cache_file):
+        with open(cache_file, 'r') as f:
+            return json.load(f)
+
+    # Generate new KG
+    chunks = chunk_document(file_id)
+    kg = build_knowledge_graph(chunks)
+    save_kg_to_cache(cache_key, kg)
+    return json.dumps(kg)</code></pre>
+                </div>
+
+                <ul class="feature-list">
+                    <li>LSTM price predictions (BTC, ETH, BNB)</li>
+                    <li>RAG playground — upload PDF, ask questions, get KG-powered answers</li>
+                    <li>Google Sheets integration for Q&A activity logging</li>
+                    <li>Handwriting-to-digital pipeline for chart analysis</li>
+                    <li>Sentiment analysis pipeline (Kafka producer/consumer)</li>
+                    <li>Cached KGs at /home/sd22750/python_kg/cache/kg/</li>
+                </ul>
+
+                <a href="http://192.168.1.247:5000" class="external-link">
+                    🔗 Live Demo <span style="color: var(--text-secondary)">http://192.168.1.247:5000</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- IndiaStock -->
+    <section id="indiastock" class="section">
+        <div class="container">
+            <h2 class="section-title">🇮🇳 IndiaStock Dashboard</h2>
+            <p class="section-subtitle">Real-time Indian stock market visualization</p>
+
+            <div class="service-card">
+                <div class="service-header">
+                    <h3 class="service-title">Mumbai Markets</h3>
+                    <span class="service-badge">Finance • Streamlit • yfinance</span>
+                </div>
+
+                <div class="problem-solution">
+                    <div class="ps-box">
+                        <h4>Problem</h4>
+                        <p>Tracking Indian equities (NSE/BSE) requires multiple paid tools; no unified dashboard for portfolio overview.</p>
+                    </div>
+                    <div class="ps-box solution">
+                        <h4>Solution</h4>
+                        <p>Self-hosted Streamlit dashboard pulling real-time NSE data via yfinance, visualized with Plotly.</p>
+                    </div>
+                </div>
+
+                <ul class="feature-list">
+                    <li>Real-time NSE/BSE data via yfinance</li>
+                    <li>Interactive Plotly charts (candlesticks, volume, moving averages)</li>
+                    <li>Portfolio tracking with P&L calculations</li>
+                    <li>Managed via indiastock-manager skill</li>
+                </ul>
+
+                <a href="http://192.168.1.247:5001" class="external-link">
+                    🔗 Live Demo <span style="color: var(--text-secondary)">http://192.168.1.247:5001</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Automation -->
+    <section id="automation" class="section">
+        <div class="container">
+            <h2 class="section-title">⚙️ Automation</h2>
+            <p class="section-subtitle">cron jobs, workflows, and scheduled tasks</p>
+
+            <div class="two-col">
+                <!-- Job Alerts -->
+                <div class="service-card">
+                    <h3 class="service-title">Job Alert System</h3>
+                    <span class="service-badge">Python • cron • Gmail SMTP</span>
+
+                    <div class="diagram-title">Daily Pipeline</div>
+                    <div class="diagram-container">
+                        <pre class="ascii-art">
+┌─────────────────────────────────────────────────────┐
+│  cron: 0 8 * * * (London)                          │
+└──────────────────────┬──────────────────────────────┘
+                       │
+                       ▼
+┌─────────────────────────────────────────────────────┐
+│  web_search: Indeed, Totaljobs, Reed, Hays,        │
+│  Guardian Jobs                                      │
+│  Query: "Account Assistant Finance Assistant       │
+│  Account Analyst jobs London UK June 2026"          │
+└──────────────────────┬──────────────────────────────┘
+                       │
+                       ▼
+┌─────────────────────────────────────────────────────┐
+│  Parse Results → Format HTML Email                  │
+│  Save to /tmp/job_alert_body.txt                    │
+└──────────────────────┬──────────────────────────────┘
+                       │
+                       ▼
+┌─────────────────────────────────────────────────────┐
+│  job_alert_email.py                                 │
+│  → Gmail SMTP → sid@editdestiny.com                │
+└─────────────────────────────────────────────────────┘
+                       │
+                       ▼
+              ✅ Confirmation + Message ID
+                        </pre>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">Email Sender (job_alert_email.py)</div>
+<pre><code class="language-python">import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+def send_alert_email(subject, body_path):
+    with open(body_path, 'r') as f:
+        html_body = f.read()
+
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = subject
+    msg['From'] = GMAIL_USER
+    msg['To'] = GMAIL_TO
+
+    part = MIMEText(html_body, 'html')
+    msg.attach(part)
+
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
+        server.login(GMAIL_USER, GMAIL_APP_PASSWORD)
+        server.send_message(msg)
+    return msg['Message-ID']</code></pre>
+                    </div>
+
+                    <ul class="feature-list">
+                        <li>Runs 8am London time daily</li>
+                        <li>Searches 5 job boards simultaneously</li>
+                        <li>Logs message ID for tracking</li>
+                        <li>Zero false positives — structured queries only</li>
+                    </ul>
+                </div>
+
+                <!-- n8n -->
+                <div class="service-card">
+                    <h3 class="service-title">n8n Workflows</h3>
+                    <span class="service-badge">Workflow • Webhooks • Google Sheets</span>
+
+                    <div class="diagram-title">PDF Upload Workflow</div>
+                    <div class="diagram-container">
+                        <div class="mermaid">
+graph LR
+    A["📄 PDF Upload<br/>Dashboard"] --> B["🔗 Webhook<br/>/webhook/upload_pdf"]
+    B --> C["📥 n8n Workflow"]
+    C --> D["🐍 python-kg<br/>Process & Chunk"]
+    D --> E["🕸️ Build KG"]
+    E --> F["💾 Cache KG"]
+    F --> G["📝 Log to<br/>Google Sheets"]
+                        </div>
+                    </div>
+
+                    <ul class="feature-list">
+                        <li>PDF processing pipeline via webhooks</li>
+                        <li>Google Sheets activity logging</li>
+                        <li>Data webhook for external integrations</li>
+                        <li>Visual workflow editor — no code required</li>
+                    </ul>
+
+                    <a href="http://192.168.1.247:5678" class="external-link">
+                        🔗 n8n Dashboard <span style="color: var(--text-secondary)">http://192.168.1.247:5678</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Media Stack -->
+    <section id="media" class="section">
+        <div class="container">
+            <h2 class="section-title">🎬 Media Stack</h2>
+            <p class="section-subtitle">Self-hosted entertainment infrastructure</p>
+
+            <div class="three-col">
+                <div class="service-card">
+                    <h3 class="service-title">Plex</h3>
+                    <p class="service-description">Media server for movies, TV, music. Hardware-accelerated transcoding, mobile sync, shared libraries.</p>
+                    <a href="http://192.168.1.247:32400" class="external-link">🔗 :32400</a>
+                </div>
+
+                <div class="service-card">
+                    <h3 class="service-title">Audiobookshelf</h3>
+                    <p class="service-description">Audiobook server with chapters, bookmarks, playback speed. Perfect for long-form listening.</p>
+                    <a href="http://192.168.1.247:80" class="external-link">🔗 :80</a>
+                </div>
+
+                <div class="service-card">
+                    <h3 class="service-title">PhotoPrism</h3>
+                    <p class="service-description">Self-hosted Google Photos alternative. Face detection, categories, EXIF search, RAW support.</p>
+                    <a href="http://192.168.1.247:2342" class="external-link">🔗 :2342</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Was Built -->
+    <section id="how-built" class="section">
+        <div class="container">
+            <h2 class="section-title">🔧 How It Was Built</h2>
+            <p class="section-subtitle">Tech choices, lessons learned, and what's next</p>
+
+            <div class="service-card">
+                <h3 class="service-title">Architecture Decisions</h3>
+
+                <div class="problem-solution">
+                    <div class="ps-box">
+                        <h4>Why Docker?</h4>
+                        <p>Isolation without overhead. Each service is self-contained, reproducible, and crash-resistant. Traefik handles routing so containers don't need to know about each other.</p>
+                    </div>
+                    <div class="ps-box solution">
+                        <h4>Why Self-Hosted?</h4>
+                        <p>Full control, zero subscription fees, privacy. The Intel i5 handles everything with room to spare (~0.16 load). $0/month hosting.</p>
+                    </div>
+                </div>
+
+                <div class="diagram-title">Sentiment Analysis Pipeline (Kafka)</div>
+                <div class="diagram-container">
+                    <div class="mermaid">
+graph LR
+    A["📰 Crypto News<br/>Producer"] --> B["🟪 Kafka Topic<br/>crypto-sentiment"]
+    B --> C["⚙️ Consumer<br/>Sentiment Model"]
+    C --> D["📊 Results CSV<br/>Dashboard"]
+                    </div>
+                </div>
+
+                <h4 style="margin: 25px 0 15px; color: var(--text-primary);">Key GitHub Repos</h4>
+                <ul class="feature-list">
+                    <li><strong>mini-llm</strong> — /home/sd22750/mini-llm (fine-tuned GPT, Streamlit UI)</li>
+                    <li><strong>crypto_dashboard_multi</strong> — /home/sd22750/projects/crypto_dashboard_multi (LSTM + RAG)</li>
+                    <li><strong>python_kg</strong> — knowledge graph API (python-kg container)</li>
+                    <li><strong>openclaw workspace</strong> — automation scripts, job alerts, health checks</li>
+                </ul>
+
+                <h4 style="margin: 25px 0 15px; color: var(--text-primary);">Lessons Learned</h4>
+                <ul class="feature-list">
+                    <li><strong>Stock answers > model quality.</strong> The real product in mini-llm is the fallback system, not the model. 1032 deterministic answers mask training collapse.</li>
+                    <li><strong>Caching is everything.</strong> KG generation is expensive; cache keys on file content MD5 = instant retrieval.</li>
+                    <li><strong>Repetition penalty tuning.</strong> 1.2 was too aggressive (crushing legitimate term reuse). 1.05 is gentle but effective.</li>
+                    <li><strong>Intent classifier bugs > model bugs.</strong> Fixing a bad pattern match improves reliability more than retraining.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>The Lab — Home Server Edition</p>
+            <p style="margin-top: 10px;">
+                <span style="color: var(--accent-green);">●</span> All systems operational &nbsp;|&nbsp;
+                Last updated: June 2026
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#21262d',
+                primaryTextColor: '#e6edf3',
+                primaryBorderColor: '#30363d',
+                lineColor: '#8b949e',
+                secondaryColor: '#161b22',
+                tertiaryColor: '#0d1117'
+            },
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true
+            }
+        });
+    </script>
+</body>
+</html>
