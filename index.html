@@ -689,6 +689,7 @@
             .services-grid { grid-template-columns: repeat(2, 1fr); }
             .ps-grid { grid-template-columns: 1fr; }
             #overview .container > div { grid-template-columns: repeat(3, 1fr); }
+            #openclaw .container > div:first-child { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 768px) {
@@ -701,6 +702,7 @@
             .arch-flow { flex-direction: column; }
             .arch-arrow { transform: rotate(90deg); }
             #overview .container > div { grid-template-columns: repeat(2, 1fr); }
+            #openclaw .container > div:first-child { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 480px) {
@@ -1098,34 +1100,97 @@ graph TD
                 <p class="section-subtitle">The AI agent framework running on this server — scheduling, tools, memory, and orchestration</p>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 40px;">
+                <!-- Milo -->
                 <div class="card">
                     <div class="card-header">
                         <div class="card-icon blue">🐕</div>
-                        <span class="card-badge">Milo — AI Assistant</span>
+                        <span class="card-badge">Primary</span>
                     </div>
-                    <h3 class="card-title">This Agent — Milo 🐶</h3>
-                    <p class="card-description">That's me. Lab with a labrador soul. Running on OpenClaw with long-term memory, cron scheduling, and tool access to your home server, messaging, and workflows.</p>
-                    <ul class="feature-list">
-                        <li>Persistent memory across sessions (MEMORY.md)</li>
-                        <li>Cron job scheduling — job alerts, heartbeats, reminders</li>
-                        <li>Telegram integration — DM, group broadcasts</li>
-                        <li>Sub-agent spawning for parallel tasks</li>
-                        <li>Skills system — reusable procedures (29 skills)</li>
+                    <h3 class="card-title">Milo 🐶</h3>
+                    <p class="card-description">The labrador. Friendly, loyal, never sleeps. Running cron jobs at 3am with zero complaint. Warm, witty, gets things done without making a fuss.</p>
+                    <div class="ps-grid" style="margin-top: 16px;">
+                        <div class="ps-box">
+                            <div class="ps-box-label">Strengths</div>
+                            <p>Memory, scheduling, home server access, practical problem-solving</p>
+                        </div>
+                        <div class="ps-box solution">
+                            <div class="ps-box-label">Vibe</div>
+                            <p>Dry wit, understated, resourceful before asking</p>
+                        </div>
+                    </div>
+                    <ul class="feature-list" style="margin-top: 16px;">
+                        <li>Long-term memory (MEMORY.md)</li>
+                        <li>29 reusable skills</li>
+                        <li>Job alerts, heartbeats, reminders</li>
+                        <li>Sub-agent orchestration</li>
                     </ul>
                 </div>
 
+                <!-- Heisenberg -->
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-icon green">🛠️</div>
-                        <span class="card-badge">Architecture</span>
+                        <div class="card-icon purple">🎯</div>
+                        <span class="card-badge">Auditor</span>
                     </div>
-                    <h3 class="card-title">OpenClaw Stack</h3>
-                    <p class="card-description">Node.js agent runtime with skills, memory, scheduling, and channel integrations. Handles Telegram, cron, sub-agents, and tool execution.</p>
-                    
-                    <div class="diagram-wrapper">
-                        <div class="diagram-label">Runtime Architecture</div>
-                        <div class="mermaid">
+                    <h3 class="card-title">Heisenberg ⚖️</h3>
+                    <p class="card-description">The precision agent. Checks everything before it runs. Systematic, cautious, methodically breaks down risks. Named after the uncertainty principle for a reason.</p>
+                    <div class="ps-grid" style="margin-top: 16px;">
+                        <div class="ps-box">
+                            <div class="ps-box-label">Strengths</div>
+                            <p>Safety review, config auditing, risk assessment, config validation</p>
+                        </div>
+                        <div class="ps-box solution">
+                            <div class="ps-box-label">Vibe</div>
+                            <p>Precise, methodical, no stone left unturned</p>
+                        </div>
+                    </div>
+                    <ul class="feature-list" style="margin-top: 16px;">
+                        <li>Pre-execution safety reviews</li>
+                        <li>Config hardening and auditing</li>
+                        <li>Health check automation</li>
+                        <li>Heisenberg audit skill</li>
+                    </ul>
+                </div>
+
+                <!-- Jesse -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon cyan">🚀</div>
+                        <span class="card-badge">Executor</span>
+                    </div>
+                    <h3 class="card-title">Jesse 🚀</h3>
+                    <p class="card-description">The operator. Takes direction and executes. Fast, reliable, handles the heavy lifting. Name from Breaking Bad — cooks without ego, delivers without drama.</p>
+                    <div class="ps-grid" style="margin-top: 16px;">
+                        <div class="ps-box">
+                            <div class="ps-box-label">Strengths</div>
+                            <p>Task execution, data processing, API integrations, pipeline ops</p>
+                        </div>
+                        <div class="ps-box solution">
+                            <div class="ps-box-label">Vibe</div>
+                            <p>Quiet competence, no wasted motion</p>
+                        </div>
+                    </div>
+                    <ul class="feature-list" style="margin-top: 16px;">
+                        <li>Background task execution</li>
+                        <li>Kafka sentiment pipeline</li>
+                        <li>Data pipeline management</li>
+                        <li>Heavy compute workloads</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon green">🛠️</div>
+                    <span class="card-badge">Architecture</span>
+                </div>
+                <h3 class="card-title">OpenClaw Stack</h3>
+                <p class="card-description">Node.js agent runtime with skills, memory, scheduling, and channel integrations. Handles Telegram, cron, sub-agents, and tool execution.</p>
+                
+                <div class="diagram-wrapper" style="margin-top: 16px;">
+                    <div class="diagram-label">Runtime Architecture</div>
+                    <div class="mermaid">
 graph TD
     A["📱 Telegram / Channels"] --> B["🔴 OpenClaw Gateway"]
     B --> C["🧠 Agent Session"]
@@ -1133,18 +1198,17 @@ graph TD
     C --> E["🔧 Tools & Skills"]
     C --> F["⏰ Cron Scheduler"]
     C --> G["👥 Sub-Agents"]
-    G --> H["🎯 Task Workers"]
+    G --> H["🎯 Milo / Heisenberg / Jesse"]
                         </div>
-                    </div>
-
-                    <ul class="feature-list">
-                        <li>Multi-session management — main + isolated agents</li>
-                        <li>Tool system with 20+ built-in tools</li>
-                        <li>Skill workshop for reusable procedures</li>
-                        <li>Memory: session transcripts + durable MEMORY.md</li>
-                        <li>Message routing across Telegram, Signal, WhatsApp</li>
-                    </ul>
                 </div>
+
+                <ul class="feature-list" style="margin-top: 16px;">
+                    <li>Multi-session management — main + isolated agents</li>
+                    <li>Tool system with 20+ built-in tools</li>
+                    <li>Skill workshop for reusable procedures</li>
+                    <li>Memory: session transcripts + durable MEMORY.md</li>
+                    <li>Message routing across Telegram, Signal, WhatsApp</li>
+                </ul>
             </div>
         </div>
     </section>
