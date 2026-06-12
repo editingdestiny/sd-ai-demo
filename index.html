@@ -678,6 +678,10 @@
         }
 
         /* Responsive */
+        @media (max-width: 1200px) {
+            #overview .container > div { grid-template-columns: repeat(4, 1fr); }
+        }
+
         @media (max-width: 1024px) {
             .hero-grid { grid-template-columns: 1fr; gap: 40px; }
             .hero-visual { order: -1; }
@@ -730,6 +734,8 @@
             <div class="nav-links">
                 <a href="#hardware">Hardware</a>
                 <a href="#infrastructure">Infrastructure</a>
+                <a href="#openclaw">OpenClaw</a>
+                <a href="#agents">Agents on Fire</a>
                 <a href="#ai-services">AI Services</a>
                 <a href="#automation">Automation</a>
                 <a href="#media">Media</a>
@@ -812,7 +818,7 @@
     <!-- Services Overview -->
     <section id="overview" class="section" style="padding: 60px 0; background: var(--bg-secondary);">
         <div class="container">
-            <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px;">
+            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 16px;">
                 <a href="#hardware" style="text-decoration: none;">
                     <div class="card" style="text-align: center; padding: 24px 16px; cursor: pointer;">
                         <div style="font-size: 2rem; margin-bottom: 12px;">🖥️</div>
@@ -825,6 +831,20 @@
                         <div style="font-size: 2rem; margin-bottom: 12px;">🔧</div>
                         <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">Infrastructure</div>
                         <div style="font-size: 0.75rem; color: var(--text-muted);">Docker + Traefik</div>
+                    </div>
+                </a>
+                <a href="#openclaw" style="text-decoration: none;">
+                    <div class="card" style="text-align: center; padding: 24px 16px; cursor: pointer;">
+                        <div style="font-size: 2rem; margin-bottom: 12px;">🐕</div>
+                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">OpenClaw</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">AI Agent Runtime</div>
+                    </div>
+                </a>
+                <a href="#agents" style="text-decoration: none;">
+                    <div class="card" style="text-align: center; padding: 24px 16px; cursor: pointer;">
+                        <div style="font-size: 2rem; margin-bottom: 12px;">🔥</div>
+                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">Agents on Fire</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">Task Agents</div>
                     </div>
                 </a>
                 <a href="#ai-services" style="text-decoration: none;">
@@ -1065,6 +1085,128 @@ graph TD
     ports:
       - "5678:5678"</code></pre>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- OpenClaw Agent Runtime -->
+    <section id="openclaw" class="section" style="background: var(--bg-secondary);">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-eyebrow">Agent Runtime</div>
+                <h2 class="section-title">OpenClaw</h2>
+                <p class="section-subtitle">The AI agent framework running on this server — scheduling, tools, memory, and orchestration</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon blue">🐕</div>
+                        <span class="card-badge">Milo — AI Assistant</span>
+                    </div>
+                    <h3 class="card-title">This Agent — Milo 🐶</h3>
+                    <p class="card-description">That's me. Lab with a labrador soul. Running on OpenClaw with long-term memory, cron scheduling, and tool access to your home server, messaging, and workflows.</p>
+                    <ul class="feature-list">
+                        <li>Persistent memory across sessions (MEMORY.md)</li>
+                        <li>Cron job scheduling — job alerts, heartbeats, reminders</li>
+                        <li>Telegram integration — DM, group broadcasts</li>
+                        <li>Sub-agent spawning for parallel tasks</li>
+                        <li>Skills system — reusable procedures (29 skills)</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon green">🛠️</div>
+                        <span class="card-badge">Architecture</span>
+                    </div>
+                    <h3 class="card-title">OpenClaw Stack</h3>
+                    <p class="card-description">Node.js agent runtime with skills, memory, scheduling, and channel integrations. Handles Telegram, cron, sub-agents, and tool execution.</p>
+                    
+                    <div class="diagram-wrapper">
+                        <div class="diagram-label">Runtime Architecture</div>
+                        <div class="mermaid">
+graph TD
+    A["📱 Telegram / Channels"] --> B["🔴 OpenClaw Gateway"]
+    B --> C["🧠 Agent Session"]
+    C --> D["📝 Memory System"]
+    C --> E["🔧 Tools & Skills"]
+    C --> F["⏰ Cron Scheduler"]
+    C --> G["👥 Sub-Agents"]
+    G --> H["🎯 Task Workers"]
+                        </div>
+                    </div>
+
+                    <ul class="feature-list">
+                        <li>Multi-session management — main + isolated agents</li>
+                        <li>Tool system with 20+ built-in tools</li>
+                        <li>Skill workshop for reusable procedures</li>
+                        <li>Memory: session transcripts + durable MEMORY.md</li>
+                        <li>Message routing across Telegram, Signal, WhatsApp</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Agents on Fire -->
+    <section id="agents" class="section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-eyebrow">Task Automation</div>
+                <h2 class="section-title">Agents on Fire 🔥</h2>
+                <p class="section-subtitle">Background task agents — scheduled, spawned, and running detached workflows</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 40px;">
+                <div class="card" style="text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 16px;">📧</div>
+                    <h3 style="font-size: 1.1rem; margin-bottom: 8px;">Job Alert Agent</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 16px;">Daily 8am London — searches 5 job boards, emails results</p>
+                    <span class="card-badge" style="background: rgba(34, 197, 94, 0.15); color: var(--accent-green);">Daily • cron</span>
+                </div>
+                <div class="card" style="text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 16px;">❤️</div>
+                    <h3 style="font-size: 1.1rem; margin-bottom: 8px;">Heartbeat Agent</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 16px;">30-min checks — memory files, container health, system status</p>
+                    <span class="card-badge" style="background: rgba(59, 130, 246, 0.15); color: var(--accent);">Every 30min</span>
+                </div>
+                <div class="card" style="text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 16px;">📊</div>
+                    <h3 style="font-size: 1.1rem; margin-bottom: 8px;">Data Analyst Agent</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 16px;">On-demand CSV/Excel analysis with visualizations</p>
+                    <span class="card-badge" style="background: rgba(168, 85, 247, 0.15); color: var(--accent-purple);">On-demand</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon orange">🔥</div>
+                    <span class="card-badge">Agent Lifecycle</span>
+                </div>
+                <h3 class="card-title">How Agents Spawn & Work</h3>
+                <p class="card-description">Agents run in isolated sessions, triggered by cron schedules or on-demand requests. Each gets a task brief, works autonomously, and delivers results.</p>
+
+                <div class="diagram-wrapper" style="margin-top: 24px;">
+                    <div class="diagram-label">Agent Spawn Flow</div>
+                    <div class="mermaid">
+graph LR
+    A["⏰ Cron / Request"] --> B["🎯 Spawn Session"]
+    B --> C["📋 Task Brief"]
+    C --> D["🔧 Tools + Skills"]
+    D --> E["⚙️ Isolated Agent"]
+    E --> F["✅ Result"]
+    F --> G["📨 Announce / Store"]
+                        </div>
+                </div>
+
+                <ul class="feature-list" style="margin-top: 24px;">
+                    <li><strong>Isolated sessions</strong> — each agent runs in its own context, no interference</li>
+                    <li><strong>Announced results</strong> — completion goes to Telegram DM or group chat</li>
+                    <li><strong>Failure alerting</strong> — cooldown + alert after repeated failures</li>
+                    <li><strong>Sub-agent orchestration</strong> — main agent spawns children for parallel work</li>
+                    <li><strong>Light context</strong> — bootstrap with essential memory, not full transcript</li>
+                </ul>
             </div>
         </div>
     </section>
