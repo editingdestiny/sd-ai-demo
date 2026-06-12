@@ -722,11 +722,11 @@
                 The Lab
             </div>
             <div class="nav-links">
+                <a href="#hardware">Hardware</a>
                 <a href="#infrastructure">Infrastructure</a>
                 <a href="#ai-services">AI Services</a>
                 <a href="#automation">Automation</a>
                 <a href="#media">Media</a>
-                <a href="#how-built">How It Was Built</a>
             </div>
         </div>
     </nav>
@@ -803,13 +803,115 @@
         </div>
     </section>
 
+    <!-- Hardware Specs -->
+    <section id="hardware" class="section" style="background: var(--bg-secondary);">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-eyebrow">Hardware</div>
+                <h2 class="section-title">The Machine Behind It All</h2>
+                <p class="section-subtitle">A decade-old Intel i5 still running circles around cloud subscriptions</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-bottom: 40px;">
+                <div class="card" style="text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 16px;">🖥️</div>
+                    <h3 style="font-size: 1.25rem; margin-bottom: 8px;">Intel Core i5-3470</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 16px;">3.20GHz · 4 cores · 4 threads</p>
+                    <span class="card-badge" style="background: rgba(34, 197, 94, 0.15); color: var(--accent-green);">Ivy Bridge · 2012</span>
+                </div>
+                <div class="card" style="text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 16px;">💾</div>
+                    <h3 style="font-size: 1.25rem; margin-bottom: 8px;">31 GB RAM</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 16px;">DDR3 · Sufficient for everything</p>
+                    <span class="card-badge" style="background: rgba(59, 130, 246, 0.15); color: var(--accent);">No bottlenecks</span>
+                </div>
+                <div class="card" style="text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 16px;">⚡</div>
+                    <h3 style="font-size: 1.25rem; margin-bottom: 8px;">0.16 Load Average</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 16px;">Sitting idle most of the time</p>
+                    <span class="card-badge" style="background: rgba(168, 85, 247, 0.15); color: var(--accent-purple);">Mostly idle</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon green">🏠</div>
+                    <span class="card-badge">Self-Hosted</span>
+                </div>
+                <h3 class="card-title">This Website Runs On A 2013 Desktop</h3>
+                <p class="card-description">No cloud VMs, no subscription hosting, no managed services. Just a desktop tower in a spare room, a Cloudflare tunnel, and a custom domain. The same machine that plays Plex also serves sd-ai.co.uk to the world.</p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px;">
+                    <div>
+                        <div class="ps-box">
+                            <div class="ps-box-label">What it replaces</div>
+                            <p>AWS EC2, Cloudflare Pages, paid hosting, third-party CDNs. All of it.</p>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="ps-box solution">
+                            <div class="ps-box-label">What it costs</div>
+                            <p>~$0/month in hosting. Electricity: negligible. The hardware was already paid for.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="diagram-wrapper" style="margin-top: 24px;">
+                    <div class="diagram-label">Self-Hosted Web Stack</div>
+                    <div class="mermaid">
+graph TD
+    A["🌍 Internet"] --> B["☁️ Cloudflare Tunnel"]
+    B --> C["🔀 Traefik Reverse Proxy"]
+    C --> D["🐳 Docker Containers"]
+    D --> E["🏠 Home Server\nIntel i5-3470\n31GB RAM"]
+    E --> F["💾 Local Storage"]
+    F --> G["📺 Plex Media"]
+    G --> H["🤖 AI Services"]
+                        </div>
+                </div>
+
+                <ul class="feature-list" style="margin-top: 24px;">
+                    <li>Cloudflare Tunnel → no open ports on router</li>
+                    <li>Traefik handles SSL termination and routing</li>
+                    <li>Docker ensures services survive crashes</li>
+                    <li>24/7 uptime for ~£5/month electricity</li>
+                    <li>Full control over data and configuration</li>
+                    <li>No vendor lock-in or surprise bills</li>
+                </ul>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 32px;">
+                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center;">
+                    <div style="font-size: 1.5rem; margin-bottom: 8px;">💰</div>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent-green);">£0</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Monthly Hosting</div>
+                </div>
+                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center;">
+                    <div style="font-size: 1.5rem; margin-bottom: 8px;">🔒</div>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent);">100%</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Data Ownership</div>
+                </div>
+                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center;">
+                    <div style="font-size: 1.5rem; margin-bottom: 8px;">⚡</div>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent-purple);">~50W</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Power Draw</div>
+                </div>
+                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center;">
+                    <div style="font-size: 1.5rem; margin-bottom: 8px;">🔧</div>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent-cyan);">∞</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Flexibility</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Infrastructure -->
     <section id="infrastructure" class="section">
         <div class="container">
             <div class="section-header">
                 <div class="section-eyebrow">Foundation</div>
                 <h2 class="section-title">Home Infrastructure</h2>
-                <p class="section-subtitle">The homelab powering everything — Intel i5-3470, 31GB RAM, Docker-based architecture</p>
+                <p class="section-subtitle">The homelab powering everything — Docker-based architecture with Traefik</p>
             </div>
 
             <div class="arch-diagram">
