@@ -148,10 +148,10 @@
 
         /* Hero */
         .hero {
-            min-height: 100vh;
+            min-height: 60vh;
             display: flex;
             align-items: center;
-            padding: 120px 0 80px;
+            padding: 100px 0 60px;
             position: relative;
         }
 
@@ -684,6 +684,7 @@
             .hero-content h1 { font-size: 3rem; }
             .services-grid { grid-template-columns: repeat(2, 1fr); }
             .ps-grid { grid-template-columns: 1fr; }
+            #overview .container > div { grid-template-columns: repeat(3, 1fr); }
         }
 
         @media (max-width: 768px) {
@@ -695,6 +696,11 @@
             .server-containers { grid-template-columns: repeat(2, 1fr); }
             .arch-flow { flex-direction: column; }
             .arch-arrow { transform: rotate(90deg); }
+            #overview .container > div { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 480px) {
+            #overview .container > div { grid-template-columns: 1fr; }
         }
 
         /* Scrollbar */
@@ -799,6 +805,49 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Overview -->
+    <section id="overview" class="section" style="padding: 60px 0; background: var(--bg-secondary);">
+        <div class="container">
+            <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px;">
+                <a href="#hardware" style="text-decoration: none;">
+                    <div class="card" style="text-align: center; padding: 24px 16px; cursor: pointer;">
+                        <div style="font-size: 2rem; margin-bottom: 12px;">🖥️</div>
+                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">Hardware</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">Intel i5-3470</div>
+                    </div>
+                </a>
+                <a href="#infrastructure" style="text-decoration: none;">
+                    <div class="card" style="text-align: center; padding: 24px 16px; cursor: pointer;">
+                        <div style="font-size: 2rem; margin-bottom: 12px;">🔧</div>
+                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">Infrastructure</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">Docker + Traefik</div>
+                    </div>
+                </a>
+                <a href="#ai-services" style="text-decoration: none;">
+                    <div class="card" style="text-align: center; padding: 24px 16px; cursor: pointer;">
+                        <div style="font-size: 2rem; margin-bottom: 12px;">🧠</div>
+                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">AI Services</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">mini-llm + RAG</div>
+                    </div>
+                </a>
+                <a href="#automation" style="text-decoration: none;">
+                    <div class="card" style="text-align: center; padding: 24px 16px; cursor: pointer;">
+                        <div style="font-size: 2rem; margin-bottom: 12px;">⚙️</div>
+                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">Automation</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">n8n + cron</div>
+                    </div>
+                </a>
+                <a href="#media" style="text-decoration: none;">
+                    <div class="card" style="text-align: center; padding: 24px 16px; cursor: pointer;">
+                        <div style="font-size: 2rem; margin-bottom: 12px;">🎬</div>
+                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">Media</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">Plex + Audiobooks</div>
+                    </div>
+                </a>
             </div>
         </div>
     </section>
