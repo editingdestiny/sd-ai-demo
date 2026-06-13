@@ -1449,6 +1449,95 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.001)</code></pre>
                     <li>Managed via indiastock-manager skill</li>
                 </ul>
             </div>
+
+            <!-- Agents on Fire -->
+            <div class="card" style="margin-top: 32px;">
+                <div class="card-header">
+                    <div class="card-icon orange">🔥</div>
+                    <span class="card-badge">Agents • Finance • Autonomy</span>
+                </div>
+                <h3 class="card-title">Agents on Fire — AI Investment Firm</h3>
+                <p class="card-description">7 autonomous AI agents running a £500K paper portfolio. Each agent has a defined role — Quant screens, Risk filters, Compliance approves, CEO decides. No human trading desk.</p>
+
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 24px 0;">
+                    <div style="text-align: center; padding: 16px; background: var(--bg-card-hover); border-radius: 8px; border: 1px solid var(--border);">
+                        <div style="font-size: 22px; font-weight: 700; color: var(--accent-green);">£493,850</div>
+                        <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Portfolio Value</div>
+                    </div>
+                    <div style="text-align: center; padding: 16px; background: var(--bg-card-hover); border-radius: 8px; border: 1px solid var(--border);">
+                        <div style="font-size: 22px; font-weight: 700; color: var(--accent-orange);">-1.23%</div>
+                        <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Drawdown</div>
+                    </div>
+                    <div style="text-align: center; padding: 16px; background: var(--bg-card-hover); border-radius: 8px; border: 1px solid var(--border);">
+                        <div style="font-size: 22px; font-weight: 700; color: var(--accent-purple);">57 mo</div>
+                        <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Runway</div>
+                    </div>
+                    <div style="text-align: center; padding: 16px; background: var(--bg-card-hover); border-radius: 8px; border: 1px solid var(--border);">
+                        <div style="font-size: 22px; font-weight: 700; color: var(--accent-cyan);">6 pos</div>
+                        <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Open Positions</div>
+                    </div>
+                </div>
+
+                <div class="diagram-wrapper">
+                    <div class="diagram-label">Agent Orchestration Pipeline</div>
+                    <div class="mermaid">
+graph LR
+    A["📊 Quant Agent"] --> B["⚠️ Risk Agent"]
+    B --> C["📋 Compliance"]
+    C --> D["🎯 CEO Agent"]
+    D --> E["📱 Telegram"]
+    D -.-> F["💰 CFO Agent"]
+    F -.-> D
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 24px;">
+                    <div style="padding: 16px; background: var(--bg-card-hover); border-radius: 8px; border-left: 3px solid var(--accent-orange);">
+                        <div style="font-weight: 700; font-size: 13px; margin-bottom: 8px;">📊 Quant Agent</div>
+                        <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.6;">Scans FTSE 100 daily. RSI, MACD, Bollinger Bands. 4-factor model: momentum, quality, value, 52W distance. Confidence 60-100%.</div>
+                    </div>
+                    <div style="padding: 16px; background: var(--bg-card-hover); border-radius: 8px; border-left: 3px solid #f87171;">
+                        <div style="font-weight: 700; font-size: 13px; margin-bottom: 8px;">⚠️ Risk Agent</div>
+                        <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.6;">Filters signals by position size, sector exposure, stop-loss proximity. WATCH status for at-risk positions. Veto overrules approval.</div>
+                    </div>
+                    <div style="padding: 16px; background: var(--bg-card-hover); border-radius: 8px; border-left: 3px solid var(--accent-purple);">
+                        <div style="font-weight: 700; font-size: 13px; margin-bottom: 8px;">📋 Compliance Agent</div>
+                        <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.6;">Regulatory gate. Max sector 30%, shorts only within 5% of 52W high. Mandatory AI disclaimer on all research.</div>
+                    </div>
+                    <div style="padding: 16px; background: var(--bg-card-hover); border-radius: 8px; border-left: 3px solid var(--accent);">
+                        <div style="font-weight: 700; font-size: 13px; margin-bottom: 8px;">🎯 CEO Agent</div>
+                        <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.6;">Final trade authority. Max £50K position (10%), shorts limited. Telegram alerts to Sid on every decision. Manages LONG/SHORT portfolio.</div>
+                    </div>
+                    <div style="padding: 16px; background: var(--bg-card-hover); border-radius: 8px; border-left: 3px solid var(--accent-pink);">
+                        <div style="font-weight: 700; font-size: 13px; margin-bottom: 8px;">💰 CFO Agent</div>
+                        <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.6;">Burn monitoring, runway tracking. Monthly burn threshold £10K. Escalates if runway <180 days. Weekly digest to CEO.</div>
+                    </div>
+                    <div style="padding: 16px; background: var(--bg-card-hover); border-radius: 8px; border-left: 3px solid var(--accent-green);">
+                        <div style="font-weight: 700; font-size: 13px; margin-bottom: 8px;">📈 Performance Agent</div>
+                        <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.6;">Tracks trade history, calculates returns vs FTSE 100 benchmark. Win/loss ratio, sector attribution, daily/MTD/inception returns.</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 24px; padding: 16px; background: var(--bg-card-hover); border-radius: 8px; border: 1px solid var(--border);">
+                    <div style="font-weight: 700; font-size: 13px; margin-bottom: 12px;">📋 Live Positions</div>
+                    <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; font-size: 11px;">
+                        <div style="text-align: center;"><div style="font-weight: 700;">BATS.L</div><div style="color: #f87171;">-0.16%</div><div style="color: var(--text-muted); font-size: 10px;">£50K · PASS</div></div>
+                        <div style="text-align: center;"><div style="font-weight: 700;">AZN.L</div><div style="color: #f87171;">-1.93%</div><div style="color: var(--text-muted); font-size: 10px;">£50K · PASS</div></div>
+                        <div style="text-align: center;"><div style="font-weight: 700;">SHEL.L</div><div style="color: #f87171;">-2.13%</div><div style="color: var(--text-muted); font-size: 10px;">£50K · PASS</div></div>
+                        <div style="text-align: center;"><div style="font-weight: 700;">BP.L</div><div style="color: #f87171;">-4.11%</div><div style="color: var(--accent-orange); font-size: 10px;">£50K · WATCH</div></div>
+                        <div style="text-align: center;"><div style="font-weight: 700;">LSEG.L</div><div style="color: #f87171;">-3.97%</div><div style="color: var(--accent-orange); font-size: 10px;">£50K · WATCH</div></div>
+                        <div style="text-align: center;"><div style="font-weight: 700;">DGE.L</div><div style="color: var(--accent-green);">0.00%</div><div style="color: var(--text-muted); font-size: 10px;">£50K · PASS</div></div>
+                    </div>
+                </div>
+
+                <ul class="feature-list" style="margin-top: 24px;">
+                    <li>7 agents — Quant, Risk, Compliance, CEO, CFO, Research, Performance</li>
+                    <li>Parallel CFO monitoring — burn and runway tracked independently of trade pipeline</li>
+                    <li>Veto beats approval — pipeline fails closed, not open</li>
+                    <li>Autonomous threshold: 60% confidence = agent acts; below = CEO escalates to Sid</li>
+                    <li>Live Telegram alerts on every trade decision</li>
+                </ul>
+            </div>
         </div>
     </section>
 
