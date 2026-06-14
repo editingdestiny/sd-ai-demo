@@ -1,0 +1,23 @@
+name: Deploy to Homelab
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to home server
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          port: ${{ secrets.SERVER_PORT }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /tmp/sd-ai-demo
+            git pull origin main
+            docker build -t homelab:latest .
+            docker-compose -f /home/sd22750/nginx-docker/docker-compose.yml restart homelab
