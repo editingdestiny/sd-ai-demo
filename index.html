@@ -817,64 +817,125 @@
         </div>
     </section>
 
-    <!-- Services Overview -->
-    <section id="overview" class="section" style="padding: 60px 0; background: var(--bg-secondary);">
+    <!-- Live Services -->
+    <section id="services" class="section" style="padding: 60px 0; background: var(--bg-secondary);">
         <div class="container">
-            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 16px;">
-                <a href="#hardware" style="text-decoration: none;">
-                    <div class="card" style="text-align: center; padding: 24px 16px; cursor: pointer;">
-                        <div style="font-size: 2rem; margin-bottom: 12px;">🖥️</div>
-                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">Hardware</div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">Intel i5-3470</div>
+            <div class="section-header" style="margin-bottom: 40px;">
+                <div class="section-eyebrow">Access</div>
+                <h2 class="section-title">Live Services</h2>
+                <p class="section-subtitle">Click any service to open it in a new tab</p>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+                <a href="https://homelab.sd-ai.co.uk" target="_blank" style="text-decoration: none;">
+                    <div class="card" style="padding: 20px; cursor: pointer;">
+                        <div style="font-size: 1.75rem; margin-bottom: 10px;">🏠</div>
+                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">homelab</div>
+                        <div style="font-size: 0.7rem; color: var(--accent); word-break: break-all;">homelab.sd-ai.co.uk</div>
                     </div>
                 </a>
-                <a href="#infrastructure" style="text-decoration: none;">
-                    <div class="card" style="text-align: center; padding: 24px 16px; cursor: pointer;">
-                        <div style="font-size: 2rem; margin-bottom: 12px;">🔧</div>
-                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">Infrastructure</div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">Docker + Traefik</div>
+                <a href="https://n8n.sd-ai.co.uk" target="_blank" style="text-decoration: none;">
+                    <div class="card" style="padding: 20px; cursor: pointer;">
+                        <div style="font-size: 1.75rem; margin-bottom: 10px;">⚙️</div>
+                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">n8n</div>
+                        <div style="font-size: 0.7rem; color: var(--accent); word-break: break-all;">n8n.sd-ai.co.uk</div>
                     </div>
                 </a>
-                <a href="#openclaw" style="text-decoration: none;">
-                    <div class="card" style="text-align: center; padding: 24px 16px; cursor: pointer;">
-                        <div style="font-size: 2rem; margin-bottom: 12px;">🐕</div>
-                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">OpenClaw</div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">AI Agent Runtime</div>
+                <a href="https://mini-llm.sd-ai.co.uk" target="_blank" style="text-decoration: none;">
+                    <div class="card" style="padding: 20px; cursor: pointer;">
+                        <div style="font-size: 1.75rem; margin-bottom: 10px;">🧠</div>
+                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">mini-llm</div>
+                        <div style="font-size: 0.7rem; color: var(--accent); word-break: break-all;">mini-llm.sd-ai.co.uk</div>
                     </div>
                 </a>
-                <a href="#agentic-orchestration" style="text-decoration: none;">
-                    <div class="card" style="text-align: center; padding: 24px 16px; cursor: pointer;">
-                        <div style="font-size: 2rem; margin-bottom: 12px;">🔥</div>
-                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">Agentic Orchestration</div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">AI Investment Firm</div>
+                <a href="https://photos.sd-ai.co.uk" target="_blank" style="text-decoration: none;">
+                    <div class="card" style="padding: 20px; cursor: pointer;">
+                        <div style="font-size: 1.75rem; margin-bottom: 10px;">📷</div>
+                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">PhotoPrism</div>
+                        <div style="font-size: 0.7rem; color: var(--accent); word-break: break-all;">photos.sd-ai.co.uk</div>
                     </div>
                 </a>
-                <a href="#ai-services" style="text-decoration: none;">
-                    <div class="card" style="text-align: center; padding: 24px 16px; cursor: pointer;">
-                        <div style="font-size: 2rem; margin-bottom: 12px;">🧠</div>
-                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">AI Services</div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">mini-llm + RAG</div>
+                <a href="https://music.sd-ai.co.uk" target="_blank" style="text-decoration: none;">
+                    <div class="card" style="padding: 20px; cursor: pointer;">
+                        <div style="font-size: 1.75rem; margin-bottom: 10px;">🎬</div>
+                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">Plex</div>
+                        <div style="font-size: 0.7rem; color: var(--accent); word-break: break-all;">music.sd-ai.co.uk</div>
                     </div>
                 </a>
-                <a href="#automation" style="text-decoration: none;">
-                    <div class="card" style="text-align: center; padding: 24px 16px; cursor: pointer;">
-                        <div style="font-size: 2rem; margin-bottom: 12px;">⚙️</div>
-                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">Automation</div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">n8n + cron</div>
+                <a href="https://audio.sd-ai.co.uk" target="_blank" style="text-decoration: none;">
+                    <div class="card" style="padding: 20px; cursor: pointer;">
+                        <div style="font-size: 1.75rem; margin-bottom: 10px;">🎧</div>
+                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">Audiobooks</div>
+                        <div style="font-size: 0.7rem; color: var(--accent); word-break: break-all;">audio.sd-ai.co.uk</div>
                     </div>
                 </a>
-                <a href="#media" style="text-decoration: none;">
-                    <div class="card" style="text-align: center; padding: 24px 16px; cursor: pointer;">
-                        <div style="font-size: 2rem; margin-bottom: 12px;">🎬</div>
-                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">Media</div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">Plex + Audiobooks</div>
+                <a href="https://indiastock.sd-ai.co.uk" target="_blank" style="text-decoration: none;">
+                    <div class="card" style="padding: 20px; cursor: pointer;">
+                        <div style="font-size: 1.75rem; margin-bottom: 10px;">🇮🇳</div>
+                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">IndiaStock</div>
+                        <div style="font-size: 0.7rem; color: var(--accent); word-break: break-all;">indiastock.sd-ai.co.uk</div>
+                    </div>
+                </a>
+                <a href="https://sentimentanalysis.sd-ai.co.uk" target="_blank" style="text-decoration: none;">
+                    <div class="card" style="padding: 20px; cursor: pointer;">
+                        <div style="font-size: 1.75rem; margin-bottom: 10px;">📈</div>
+                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">Sentiment</div>
+                        <div style="font-size: 0.7rem; color: var(--accent); word-break: break-all;">sentimentanalysis.sd-ai.co.uk</div>
+                    </div>
+                </a>
+                <a href="https://llm-log.sd-ai.co.uk" target="_blank" style="text-decoration: none;">
+                    <div class="card" style="padding: 20px; cursor: pointer;">
+                        <div style="font-size: 1.75rem; margin-bottom: 10px;">📝</div>
+                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">LLM Log</div>
+                        <div style="font-size: 0.7rem; color: var(--accent); word-break: break-all;">llm-log.sd-ai.co.uk</div>
+                    </div>
+                </a>
+                <a href="https://rag.sd-ai.co.uk" target="_blank" style="text-decoration: none;">
+                    <div class="card" style="padding: 20px; cursor: pointer;">
+                        <div style="font-size: 1.75rem; margin-bottom: 10px;">🕸️</div>
+                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">RAG</div>
+                        <div style="font-size: 0.7rem; color: var(--accent); word-break: break-all;">rag.sd-ai.co.uk</div>
+                    </div>
+                </a>
+                <a href="https://markets.sd-ai.co.uk" target="_blank" style="text-decoration: none;">
+                    <div class="card" style="padding: 20px; cursor: pointer;">
+                        <div style="font-size: 1.75rem; margin-bottom: 10px;">🔥</div>
+                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">Markets</div>
+                        <div style="font-size: 0.7rem; color: var(--accent); word-break: break-all;">markets.sd-ai.co.uk</div>
+                    </div>
+                </a>
+                <a href="https://control.sd-ai.co.uk" target="_blank" style="text-decoration: none;">
+                    <div class="card" style="padding: 20px; cursor: pointer;">
+                        <div style="font-size: 1.75rem; margin-bottom: 10px;">🎛️</div>
+                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">Control</div>
+                        <div style="font-size: 0.7rem; color: var(--accent); word-break: break-all;">control.sd-ai.co.uk</div>
+                    </div>
+                </a>
+                <a href="https://sd-ai.co.uk/kg" target="_blank" style="text-decoration: none;">
+                    <div class="card" style="padding: 20px; cursor: pointer;">
+                        <div style="font-size: 1.75rem; margin-bottom: 10px;">🗄️</div>
+                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">Knowledge Graph</div>
+                        <div style="font-size: 0.7rem; color: var(--accent); word-break: break-all;">sd-ai.co.uk/kg</div>
+                    </div>
+                </a>
+                <a href="https://qr.sd-ai.co.uk" target="_blank" style="text-decoration: none;">
+                    <div class="card" style="padding: 20px; cursor: pointer;">
+                        <div style="font-size: 1.75rem; margin-bottom: 10px;">🎫</div>
+                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">QR App</div>
+                        <div style="font-size: 0.7rem; color: var(--accent); word-break: break-all;">qr.sd-ai.co.uk</div>
+                    </div>
+                </a>
+                <a href="https://sd-ai.co.uk" target="_blank" style="text-decoration: none;">
+                    <div class="card" style="padding: 20px; cursor: pointer;">
+                        <div style="font-size: 1.75rem; margin-bottom: 10px;">🌍</div>
+                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">Main Site</div>
+                        <div style="font-size: 0.7rem; color: var(--accent); word-break: break-all;">sd-ai.co.uk</div>
                     </div>
                 </a>
             </div>
         </div>
     </section>
 
-    <!-- Hardware Specs -->
+    <!-- Hardware Specs -->    <!-- Hardware Specs -->
     <section id="hardware" class="section" style="background: var(--bg-secondary);">
         <div class="container">
             <div class="section-header">
