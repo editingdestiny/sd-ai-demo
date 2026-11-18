@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="Content-Signal" content="search=yes, ai-train=no, use=reference">
+<title>Building with MCP: A Practical Guide to Model Context Protocol — Sudhanshu Deo</title>
+<meta name="description" content="A hands-on guide to the Model Context Protocol: wiring a live stock-data tool into an agent over MCP, and the design decisions behind it.">
+<link rel="canonical" href="https://sd-ai.co.uk/2026/04/27/mcp_demo/">
+<meta property="og:title" content="Building with MCP: A Practical Guide to Model Context Protocol — Sudhanshu Deo">
+<meta property="og:description" content="A hands-on guide to the Model Context Protocol: wiring a live stock-data tool into an agent over MCP, and the design decisions behind it.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://sd-ai.co.uk/2026/04/27/mcp_demo/">
+<meta property="og:image" content="https://sd-ai.co.uk/photo.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --bg: #fafaf9;
+  --bg-elev: #ffffff;
+  --fg: #18181b;
+  --fg-muted: #71717a;
+  --fg-subtle: #a1a1aa;
+  --border: #e4e4e7;
+  --border-strong: #d4d4d8;
+  --accent: #6366f1;
+  --accent-hover: #4f46e5;
+  --accent-bg: #eef2ff;
+  --code-bg: #f4f4f5;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04);
+  --radius: 12px;
+  --max-w: 720px;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #09090b;
+    --bg-elev: #18181b;
+    --fg: #fafafa;
+    --fg-muted: #a1a1aa;
+    --fg-subtle: #71717a;
+    --border: #27272a;
+    --border-strong: #3f3f46;
+    --accent: #818cf8;
+    --accent-hover: #a5b4fc;
+    --accent-bg: #1e1b4b;
+    --code-bg: #18181b;
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--font);
+  color: var(--fg);
+  background: var(--bg);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-hover); }
+code { font-family: var(--mono); font-size: 0.875em; background: var(--code-bg); padding: 0.15em 0.35em; border-radius: 4px; }
+pre { background: var(--code-bg); padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 0 0 1.3rem; border: 1px solid var(--border); }
+pre code { background: none; padding: 0; font-size: 0.85em; }
+
+/* Layout */
+main { max-width: var(--max-w); margin: 0 auto; padding: 3rem 1.25rem 4rem; }
+
+/* Header */
+header {
+  position: sticky; top: 0; z-index: 10;
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+header .inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0.9rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+header a.name {
+  font-weight: 600;
+  color: var(--fg);
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+}
+header nav { display: flex; gap: 1.5rem; }
+header nav a {
+  color: var(--fg-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+header nav a:hover { color: var(--fg); }
+
+/* Article (blog post) */
+article header { background: none; backdrop-filter: none; border-bottom: none; position: static; }
+article h1 {
+  font-size: 2.1rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  margin: 0 0 0.5rem;
+  line-height: 1.2;
+}
+article .meta { color: var(--fg-subtle); font-size: 0.85rem; margin: 0 0 2rem; }
+article h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 2.5rem 0 0.75rem;
+  letter-spacing: -0.015em;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+article h3 { font-size: 1.1rem; font-weight: 600; margin: 2rem 0 0.5rem; }
+article p { margin: 0 0 1.3rem; font-size: 1rem; }
+article a { color: var(--accent); border-bottom: 1px solid var(--border); }
+article a:hover { color: var(--accent-hover); border-bottom-color: var(--accent); }
+article ul, article ol { padding-left: 1.5rem; margin: 0 0 1.3rem; }
+article li { margin-bottom: 0.4rem; }
+article blockquote {
+  border-left: 3px solid var(--accent);
+  margin: 1.5rem 0;
+  padding: 0.25rem 0 0.25rem 1.25rem;
+  color: var(--fg-muted);
+  font-style: italic;
+}
+article figure { margin: 1.5rem 0; }
+article figure img { width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border); display: block; }
+article figcaption { font-size: 0.82rem; color: var(--fg-subtle); margin-top: 0.5rem; text-align: center; line-height: 1.4; }
+article pre { background: var(--code-bg); padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 0 0 1.3rem; border: 1px solid var(--border); }
+article hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+/* Footer */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 2rem 1.25rem;
+  color: var(--fg-subtle);
+  font-size: 0.82rem;
+  text-align: center;
+  margin-top: 4rem;
+}
+footer a { color: var(--fg-muted); }
+footer a:hover { color: var(--accent); }
+
+/* Back link */
+.back {
+  display: block;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  color: var(--fg-muted);
+  font-size: 0.9rem;
+}
+.back:hover { color: var(--accent); }
+
+@media (max-width: 640px) {
+  article h1 { font-size: 1.5rem; line-height: 1.25; }
+  article .meta { margin-bottom: 1.5rem; }
+  article h2 { font-size: 1.2rem; margin: 2rem 0 0.6rem; }
+  article h3 { font-size: 1.02rem; }
+  article p { font-size: 0.98rem; margin: 0 0 1.1rem; }
+  article pre { padding: 0.85rem; font-size: 0.8rem; }
+  article blockquote { padding: 0.25rem 0 0.25rem 1rem; }
+  article figure img { border-radius: 6px; }
+}
+
+/* --- shared additions for rebuilt posts --- */
+article table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.92rem;
+  display: block;
+  overflow-x: auto;
+}
+article th, article td {
+  border: 1px solid var(--border);
+  padding: 0.55rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+article th { background: var(--bg-elev); font-weight: 600; }
+article tbody tr:nth-child(even) { background: color-mix(in srgb, var(--bg-elev) 55%, transparent); }
+article h4 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 0.4rem; }
+article h5 { font-size: 0.94rem; font-weight: 600; margin: 1.4rem 0 0.35rem; color: var(--fg-muted); }
+article img { max-width: 100%; height: auto; border-radius: 8px; }
+article .featured img { width: 100%; }
+article .toc {
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin: 0 0 2rem;
+  font-size: 0.92rem;
+}
+article .toc p, article .toc .toc-title { margin: 0 0 0.5rem; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--fg-subtle); }
+article .toc ul { margin: 0; padding-left: 1.1rem; }
+article .toc li { margin-bottom: 0.2rem; }
+article .toc a { border-bottom: none; }
+article .toc .toc-missing { color: var(--fg-subtle); font-style: italic; }
+article .lead { font-size: 1.06rem; color: var(--fg-muted); }
+article .post-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+article .post-nav a { color: var(--fg-muted); border-bottom: none; max-width: 45%; }
+article .post-nav a:hover { color: var(--accent); }
+article .post-nav .next { text-align: right; }
+
+</style>
+<meta property="article:published_time" content="2026-04-27">
+<meta name="author" content="Sudhanshu Deo">
+</head>
+<body>
+<header><div class="inner">
+<a href="/" class="name">Sudhanshu Deo</a>
+<nav><a href="/">Home</a><a href="/blog/">Blog</a><a href="/privacy-policy/">Privacy</a></nav>
+</div></header>
+<main>
+<article>
+<h1 id="top">Building with MCP: A Practical Guide to Model Context Protocol</h1>
+<div class="meta"><time datetime="2026-04-27">27 April 2026</time> &middot; ~10 min read</div>
+
+
+<div class="featured"><img alt="Building with MCP: A Practical Guide to Model Context Protocol" decoding="async" src="/media/2026/04/indiastock-main-1.png"/></div>
+<figure><img alt="IndiaStock Dashboard - Real Stock Market Data" decoding="async" src="/media/2026/04/indiastock-main-1.png"/></figure>
+
+<p><em>A hands-on exploration of MCP through a real project</em></p>
+<hr/>
+<h2 id="table-of-contents">Table of Contents</h2>
+<div class="toc"><p class="toc-title">On this page</p><ul><li><a href="#the-problem-ai-is-isolated">The Problem: AI is Isolated</a></li><li><a href="#what-is-mcp">What is MCP?</a></li><li><a href="#project-overview">Project Overview</a></li><li><a href="#part-1-without-mcp-the-hard-way">Part 1: Without MCP (The Hard Way)</a></li><li><a href="#part-2-with-mcp-the-better-way">Part 2: With MCP (The Better Way)</a></li><li><a href="#comparing-the-two-approaches">Comparing the Two Approaches</a></li><li><a href="#key-mcp-concepts">Key MCP Concepts</a></li><li><a href="#when-to-use-mcp">When to Use MCP</a></li><li><a href="#limitations-and-considerations">Limitations and Considerations</a></li><li><a href="#conclusion">Conclusion</a></li></ul></div>
+<hr/>
+<h2 id="the-problem-ai-is-isolated">The Problem: AI is Isolated</h2>
+<p>You’ve built a powerful AI assistant. It can answer questions, write code, analyze data. But ask it “What’s my portfolio worth?” or “Read my project files” and it hits a wall. Your AI lives in a box. It can’t access your files, your databases, your APIs — unless you hard-code each integration.</p>
+<p>This is the isolation problem. Every AI developer faces it. The solutions look like:</p>
+<pre><code># Every integration is custom work
+def get_stock_price(symbol):
+    return yfinance_download(symbol)  # Custom code
+    
+def read_file(path):
+    return open(path).read()  # Custom code
+
+def query_database(sql):
+    return db.execute(sql)  # Custom code</code></pre>
+<p>Every new data source = new integration code. Every API change = broken code. Every developer rebuilding the same wheel.</p>
+<hr/>
+<h2 id="what-is-mcp">What is MCP?</h2>
+<p><strong>Model Context Protocol (MCP)</strong> is a standardized way for AI applications to connect to external tools and data sources. Think of it as USB, but for AI.</p>
+<p>Just as USB standardized how devices connect to computers, MCP standardizes how AI clients connect to servers.</p>
+<pre><code>Without MCP:     Custom integration for every data source
+                App ↔ Stock API (custom code)
+                App ↔ File system (custom code)
+                App ↔ Database (custom code)
+
+With MCP:        One protocol, any data source
+                App ↔ MCP Client ↔ MCP Server (stock data)
+                            ↔ MCP Server (file system)
+                            ↔ MCP Server (database)</code></pre>
+<p>MCP defines: – <strong>Tools</strong>: Operations the server exposes (like functions) – <strong>Resources</strong>: Data the server makes available (like GET endpoints) – <strong>Prompts</strong>: Reusable prompt templates</p>
+<hr/>
+<h2 id="project-overview">Project Overview</h2>
+<p>We built two MCP servers and a client to demonstrate MCP in action:</p>
+<pre><code>mcp-showcase/
+├── stock-mcp-server/      # Exposes stock price queries as MCP tools
+├── filesystem-mcp-server/ # Exposes file operations as MCP tools
+├── ai-client/             # Connects to both servers
+└── blog/                  # This documentation</code></pre>
+<p>The goal: Show how a single AI client can access multiple data sources through MCP, without custom integration code for each.</p>
+<hr/>
+<h2 id="part-1-without-mcp-the-hard-way">Part 1: Without MCP (The Hard Way)</h2>
+<h3 id="the-traditional-approach">The Traditional Approach</h3>
+<p>Here’s how you’d build a stock-aware AI assistant without MCP:</p>
+<pre><code># app.py - Traditional hard-coded integration
+from flask import Flask, jsonify
+import yfinance as yf
+
+app = Flask(__name__)
+
+@app.route('/api/stock/&lt;symbol&gt;')
+def get_stock_price(symbol):
+    ticker = yf.Ticker(symbol)
+    price = ticker.fast_info.current_price
+    return jsonify({'symbol': symbol, 'price': price})
+
+# Problem: This only works for stocks.
+# To add file access, you'd need ANOTHER integration:
+# @app.route('/api/file/&lt;path&gt;')
+# def read_file(path):
+#     return open(path).read()</code></pre>
+<h3 id="problems-with-this-approach">Problems with This Approach</h3>
+<p>1. <strong>No standardization</strong>: Every integration is custom 2. <strong>Breaking changes</strong>: API updates require code changes 3. <strong>Limited reuse</strong>: Can’t share integrations between apps 4. <strong>Security complexity</strong>: Each integration handles auth differently</p>
+<hr/>
+<h2 id="part-2-with-mcp-the-better-way">Part 2: With MCP (The Better Way)</h2>
+<h3 id="the-mcp-approach">The MCP Approach</h3>
+<p>Here’s the same functionality with MCP:</p>
+<pre><code># server.py - MCP server for stock data
+from mcp.server.fastmcp import FastMCP
+
+mcp = FastMCP("stock-server")
+
+@mcp.tool()
+def get_stock_price(symbol: str) -&gt; str:
+    """Get current stock price for a symbol."""
+    ticker = yf.Ticker(symbol)
+    price = ticker.fast_info.current_price
+    return json.dumps({'symbol': symbol, 'price': price})</code></pre>
+<p>The MCP client that connects to this is generic — it works with ANY MCP server:</p>
+<pre><code># client.py - MCP client
+from mcp import ClientSession, StdioServerParameters
+from mcp.client.stdio import stdio_client
+
+async def use_mcp_server():
+    server_params = StdioServerParameters(
+        command="python", 
+        args=["stock-server/server.py"]
+    )
+    
+    async with stdio_client(server_params) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            
+            # Call the tool - same interface for ANY MCP server
+            result = await session.call_tool("get_stock_price", {"symbol": "AAPL"})
+            print(result)</code></pre>
+<h3 id="benefits-of-this-approach">Benefits of This Approach</h3>
+<p>1. <strong>Standardized</strong>: Same code pattern for any data source 2. <strong>Maintainable</strong>: Server changes don’t break clients 3. <strong>Composable</strong>: Connect to multiple servers simultaneously 4. <strong>Shareable</strong>: One server can serve many clients</p>
+<hr/>
+<h2 id="comparing-the-two-approaches">Comparing the Two Approaches</h2>
+<p>| Aspect | Without MCP | With MCP | |——–|————-|———-| | <strong>Integration</strong> | Custom per data source | One pattern fits all | | <strong>Maintenance</strong> | Update every client when API changes | Update server only | | <strong>Discovery</strong> | Read API docs for each integration | `list_tools()` tells you what’s available | | <strong>Security</strong> | Custom auth per integration | MCP handles transport security | | <strong>Scale</strong> | N integrations for N data sources | N servers, one client |</p>
+<hr/>
+<h2 id="key-mcp-concepts">Key MCP Concepts</h2>
+<h3 id="tools">Tools</h3>
+<p>Tools are functions exposed by MCP servers. Clients call them like remote procedure calls:</p>
+<pre><code># Server defines a tool
+@mcp.tool()
+def get_stock_price(symbol: str) -&gt; str:
+    """Docstrings become tool descriptions."""
+    ...
+
+# Client calls it
+result = await session.call_tool("get_stock_price", {"symbol": "AAPL"})</code></pre>
+<h3 id="resources">Resources</h3>
+<p>Resources are data made available by servers (read-only):</p>
+<pre><code># Server exposes a resource
+@mcp.resource("stock://{symbol}")
+def get_stock_resource(symbol: str):
+    return json.dumps({'symbol': symbol, 'price': get_price(symbol)})
+
+# Client reads it
+resource = await session.read_resource("stock://AAPL")</code></pre>
+<h3 id="server-types">Server Types</h3>
+<p>MCP servers can run over different transports:</p>
+<p>– <strong>stdio</strong>: Local processes, great for development – <strong>SSE</strong>: Server-Sent Events, good for web clients – <strong>Streamable HTTP</strong>: Modern, flexible</p>
+<hr/>
+<h2 id="when-to-use-mcp">When to Use MCP</h2>
+<p>MCP is great when:</p>
+<p>✅ You want to expose tools to AI clients   ✅ You need multiple consumers to access the same data   ✅ You want to maintain server-side logic separately from clients   ✅ You’re building a data platform that AI agents will query  </p>
+<p>MCP is not ideal when:</p>
+<p>❌ You have a simple script with one data source (just code it directly)   ❌ You need bidirectional real-time communication (use WebSockets instead)   ❌ Your use case is purely synchronous request/response REST  </p>
+<hr/>
+<h2 id="limitations-and-considerations">Limitations and Considerations</h2>
+<p>1. <strong>Ecosystem maturity</strong>: MCP is still evolving. Check compatibility with your AI framework.</p>
+<p>2. <strong>Transport trade-offs</strong>: stdio is simple but local-only. HTTP allows remote servers but adds complexity.</p>
+<p>3. <strong>Security</strong>: MCP doesn’t automatically secure your data. You still need authentication and authorization on servers.</p>
+<p>4. <strong>Error handling</strong>: Network issues, server downtime, and tool failures need proper handling in client code.</p>
+<hr/>
+<h2 id="running-the-demo">Running the Demo</h2>
+<pre><code># Install MCP
+pip install mcp
+
+# Start the stock MCP server
+cd stock-mcp-server
+python server.py &amp;
+
+# Start the filesystem MCP server
+cd filesystem-mcp-server  
+python server.py &amp;
+
+# Run the client demo
+cd ai-client
+python client.py</code></pre>
+<hr/>
+<h2 id="conclusion">Conclusion</h2>
+<p>MCP won’t solve every integration problem, but for the specific challenge of “how do I give AI clients access to tools and data,” it’s a well-designed solution. The protocol is clean, the Python SDK is straightforward, and the pattern of “many clients, one server per data source” scales nicely.</p>
+<p>The demo project is at `https://github.com/editingdestiny/mcp-showcase` — clone it, play with the servers, and see MCP in action.</p>
+<hr/>
+<h2 id="further-reading">Further Reading</h2>
+<p>– <a href="https://modelcontextprotocol.io" rel="noopener" target="_blank">MCP Specification</a> – <a href="https://github.com/modelcontextprotocol/python-sdk" rel="noopener" target="_blank">Python SDK Documentation</a> – <a href="https://github.com/modelcontextprotocol/servers" rel="noopener" target="_blank">Official MCP Servers</a></p>
+<hr/>
+<p><em>This post is part of a series on building practical AI applications. Next: “Connecting MCP to your home automation system.”</em></p>
+
+</article>
+<div class="post-nav"><a href="/2026/08/21/building-vector-rag-with-chromadb/">&larr; Building a Vector-Based RAG Playground with ChromaDB</a><a class="next" href="/2025/12/02/fundamentals-of-tokenization-in-language-processing/">Fundamentals of Tokenization in Language Processing &rarr;</a></div>
+<a href="/blog/" class="back">&larr; Back to writing</a>
+</main>
+<footer>
+&copy; 2026 Sudhanshu Deo &middot; <a href="/privacy-policy/">Privacy</a> &middot; <a href="/blog/">Blog</a>
+</footer>
+</body>
+</html>

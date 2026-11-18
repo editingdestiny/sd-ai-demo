@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="Content-Signal" content="search=yes, ai-train=no, use=reference">
+<title>Model Training: Revolutionizing AI Applications in Banking and Finance — Sudhanshu Deo</title>
+<meta name="description" content="Supervised fine-tuning, RLHF and retrieval augmentation: what each training technique actually changes about a model&#x27;s behaviour in production.">
+<link rel="canonical" href="https://sd-ai.co.uk/2025/03/31/model-training-ai-banking-finance-2/">
+<meta property="og:title" content="Model Training: Revolutionizing AI Applications in Banking and Finance — Sudhanshu Deo">
+<meta property="og:description" content="Supervised fine-tuning, RLHF and retrieval augmentation: what each training technique actually changes about a model&#x27;s behaviour in production.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://sd-ai.co.uk/2025/03/31/model-training-ai-banking-finance-2/">
+<meta property="og:image" content="https://sd-ai.co.uk/photo.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --bg: #fafaf9;
+  --bg-elev: #ffffff;
+  --fg: #18181b;
+  --fg-muted: #71717a;
+  --fg-subtle: #a1a1aa;
+  --border: #e4e4e7;
+  --border-strong: #d4d4d8;
+  --accent: #6366f1;
+  --accent-hover: #4f46e5;
+  --accent-bg: #eef2ff;
+  --code-bg: #f4f4f5;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04);
+  --radius: 12px;
+  --max-w: 720px;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #09090b;
+    --bg-elev: #18181b;
+    --fg: #fafafa;
+    --fg-muted: #a1a1aa;
+    --fg-subtle: #71717a;
+    --border: #27272a;
+    --border-strong: #3f3f46;
+    --accent: #818cf8;
+    --accent-hover: #a5b4fc;
+    --accent-bg: #1e1b4b;
+    --code-bg: #18181b;
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--font);
+  color: var(--fg);
+  background: var(--bg);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-hover); }
+code { font-family: var(--mono); font-size: 0.875em; background: var(--code-bg); padding: 0.15em 0.35em; border-radius: 4px; }
+pre { background: var(--code-bg); padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 0 0 1.3rem; border: 1px solid var(--border); }
+pre code { background: none; padding: 0; font-size: 0.85em; }
+
+/* Layout */
+main { max-width: var(--max-w); margin: 0 auto; padding: 3rem 1.25rem 4rem; }
+
+/* Header */
+header {
+  position: sticky; top: 0; z-index: 10;
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+header .inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0.9rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+header a.name {
+  font-weight: 600;
+  color: var(--fg);
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+}
+header nav { display: flex; gap: 1.5rem; }
+header nav a {
+  color: var(--fg-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+header nav a:hover { color: var(--fg); }
+
+/* Article (blog post) */
+article header { background: none; backdrop-filter: none; border-bottom: none; position: static; }
+article h1 {
+  font-size: 2.1rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  margin: 0 0 0.5rem;
+  line-height: 1.2;
+}
+article .meta { color: var(--fg-subtle); font-size: 0.85rem; margin: 0 0 2rem; }
+article h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 2.5rem 0 0.75rem;
+  letter-spacing: -0.015em;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+article h3 { font-size: 1.1rem; font-weight: 600; margin: 2rem 0 0.5rem; }
+article p { margin: 0 0 1.3rem; font-size: 1rem; }
+article a { color: var(--accent); border-bottom: 1px solid var(--border); }
+article a:hover { color: var(--accent-hover); border-bottom-color: var(--accent); }
+article ul, article ol { padding-left: 1.5rem; margin: 0 0 1.3rem; }
+article li { margin-bottom: 0.4rem; }
+article blockquote {
+  border-left: 3px solid var(--accent);
+  margin: 1.5rem 0;
+  padding: 0.25rem 0 0.25rem 1.25rem;
+  color: var(--fg-muted);
+  font-style: italic;
+}
+article figure { margin: 1.5rem 0; }
+article figure img { width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border); display: block; }
+article figcaption { font-size: 0.82rem; color: var(--fg-subtle); margin-top: 0.5rem; text-align: center; line-height: 1.4; }
+article pre { background: var(--code-bg); padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 0 0 1.3rem; border: 1px solid var(--border); }
+article hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+/* Footer */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 2rem 1.25rem;
+  color: var(--fg-subtle);
+  font-size: 0.82rem;
+  text-align: center;
+  margin-top: 4rem;
+}
+footer a { color: var(--fg-muted); }
+footer a:hover { color: var(--accent); }
+
+/* Back link */
+.back {
+  display: block;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  color: var(--fg-muted);
+  font-size: 0.9rem;
+}
+.back:hover { color: var(--accent); }
+
+@media (max-width: 640px) {
+  article h1 { font-size: 1.5rem; line-height: 1.25; }
+  article .meta { margin-bottom: 1.5rem; }
+  article h2 { font-size: 1.2rem; margin: 2rem 0 0.6rem; }
+  article h3 { font-size: 1.02rem; }
+  article p { font-size: 0.98rem; margin: 0 0 1.1rem; }
+  article pre { padding: 0.85rem; font-size: 0.8rem; }
+  article blockquote { padding: 0.25rem 0 0.25rem 1rem; }
+  article figure img { border-radius: 6px; }
+}
+
+/* --- shared additions for rebuilt posts --- */
+article table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.92rem;
+  display: block;
+  overflow-x: auto;
+}
+article th, article td {
+  border: 1px solid var(--border);
+  padding: 0.55rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+article th { background: var(--bg-elev); font-weight: 600; }
+article tbody tr:nth-child(even) { background: color-mix(in srgb, var(--bg-elev) 55%, transparent); }
+article h4 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 0.4rem; }
+article h5 { font-size: 0.94rem; font-weight: 600; margin: 1.4rem 0 0.35rem; color: var(--fg-muted); }
+article img { max-width: 100%; height: auto; border-radius: 8px; }
+article .featured img { width: 100%; }
+article .toc {
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin: 0 0 2rem;
+  font-size: 0.92rem;
+}
+article .toc p, article .toc .toc-title { margin: 0 0 0.5rem; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--fg-subtle); }
+article .toc ul { margin: 0; padding-left: 1.1rem; }
+article .toc li { margin-bottom: 0.2rem; }
+article .toc a { border-bottom: none; }
+article .toc .toc-missing { color: var(--fg-subtle); font-style: italic; }
+article .lead { font-size: 1.06rem; color: var(--fg-muted); }
+article .post-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+article .post-nav a { color: var(--fg-muted); border-bottom: none; max-width: 45%; }
+article .post-nav a:hover { color: var(--accent); }
+article .post-nav .next { text-align: right; }
+
+</style>
+<meta property="article:published_time" content="2025-03-31">
+<meta name="author" content="Sudhanshu Deo">
+</head>
+<body>
+<header><div class="inner">
+<a href="/" class="name">Sudhanshu Deo</a>
+<nav><a href="/">Home</a><a href="/blog/">Blog</a><a href="/privacy-policy/">Privacy</a></nav>
+</div></header>
+<main>
+<article>
+<h1 id="top">Model Training: Revolutionizing AI Applications in Banking and Finance</h1>
+<div class="meta"><time datetime="2025-03-31">31 March 2025</time> &middot; ~7 min read</div>
+
+
+<div>
+
+
+
+<h2 id="key-takeaways"><strong>Key Takeaways</strong></h2>
+<ul>
+<li><strong>Model Training Defined:</strong> It’s the process of teaching AI systems to make accurate decisions or predictions using large sets of data.</li>
+<li><strong>Importance Highlighted:</strong> Mastering model training enables financial institutions to execute complex tasks seamlessly.</li>
+<li><strong>Key Concepts Preview:</strong> This blog will explore Supervised Fine-Tuning (SFT), Reinforcement Learning with Human Feedback (RLHF), Retrieval-Augmented Generation (RAG), and the role of Search &amp; Agents in enhancing AI Data Management.</li>
+</ul>
+<div>
+<h2 id="table-of-contents">Table of Contents</h2>
+<div class="toc"><p class="toc-title">On this page</p><ul><li><span class="toc-missing">Model Training: Transforming AI in Banking and Finance Operations</span></li><li><a href="#introduction">Introduction</a></li><li><a href="#section-1-overview-of-ai-in-banking-and-finance-operations">Section 1: Overview of AI in Banking and Finance Operations</a></li><li><a href="#section-2-understanding-model-training">Section 2: Understanding Model Training</a></li><li><a href="#section-3-supervised-fine-tuning-sft">Section 3: Supervised Fine-Tuning (SFT)</a></li><li><a href="#section-4-reinforcement-learning-with-human-feedback-rlhf">Section 4: Reinforcement Learning with Human Feedback (RLHF)</a></li><li><a href="#section-5-retrieval-augmented-generation-rag">Section 5: Retrieval-Augmented Generation (RAG)</a></li><li><a href="#section-6-search-agents-in-ai-data-management">Section 6: Search &amp; Agents in AI Data Management</a></li><li><a href="#section-7-challenges-and-considerations-in-ai-data-management">Section 7: Challenges and Considerations in AI Data Management</a></li><li><a href="#section-8-the-future-of-ai-in-banking-and-finance">Section 8: The Future of AI in Banking and Finance</a></li><li><a href="#conclusion">Conclusion</a></li></ul></div>
+</div>
+<h2 id="introduction">Introduction</h2>
+<p>Model Training is revolutionizing the way AI is applied in banking and finance operations. By harnessing the power of AI, financial institutions are achieving unprecedented levels of efficiency and service quality. Understanding and implementing advanced model training techniques is crucial for fully leveraging AI’s potential in banking and finance operations.</p>
+<ul>
+<li><strong>Model Training Defined:</strong> It’s the process of teaching AI systems to make accurate decisions or predictions using large sets of data.</li>
+<li><strong>Importance Highlighted:</strong> Mastering model training enables financial institutions to execute complex tasks seamlessly.</li>
+<li><strong>Key Concepts Preview:</strong> This blog will explore Supervised Fine-Tuning (SFT), Reinforcement Learning with Human Feedback (RLHF), Retrieval-Augmented Generation (RAG), and the role of Search &amp; Agents in enhancing AI Data Management.</li>
+</ul>
+<h2 id="section-1-overview-of-ai-in-banking-and-finance-operations">Section 1: Overview of AI in Banking and Finance Operations</h2>
+<ul>
+<li><strong>Define AI in the Financial Context:</strong> AI simulates human intelligence in machines, enabling them to learn, reason, and correct themselves.</li>
+<li><strong>Transformation Through AI:</strong>
+<ul>
+<li><strong><a href="https://editingdestiny.duckdns.org/ai-automation-in-finance" rel="noopener" target="_blank">Operational Efficiency</a>:</strong> AI automates routine tasks, reduces errors, and accelerates processes.</li>
+<li><strong>Enhanced Customer Experience:</strong> AI enables personalization and quick responses to customer queries.</li>
+<li><strong>Accurate Decision-Making:</strong> AI analyzes massive datasets for precise decision-making.</li>
+</ul>
+</li>
+<li><strong>Specific Applications:</strong>
+<ul>
+<li><strong><a href="https://editingdestiny.duckdns.org/ai-in-financial-compliance-roles" rel="noopener" target="_blank">Fraud Detection</a>:</strong> AI scrutinizes transaction patterns to spot fraud.</li>
+<li><strong>Risk Assessment:</strong> Utilizes machine learning for creditworthiness evaluations and market risk predictions.</li>
+<li><strong>Personalized Services:</strong> Offers customized financial advice and products.</li>
+<li><strong>Process Automation:</strong> Facilitates data entry and compliance checks in back-office operations.</li>
+</ul>
+</li>
+<li><strong>Research Findings:</strong> AI in banking is predicted to save the industry around $1 trillion by 2030.<br/>
+<a href="https://www.rapidinnovation.io/post/ai-in-automating-financial-operations-benefits-challenges-and-future" rel="noopener" target="_blank">Source URL</a></li>
+</ul>
+<h2 id="section-2-understanding-model-training">Section 2: Understanding Model Training</h2>
+<ul>
+<li><strong>Model Training Defined:</strong> It involves adjusting an AI model’s parameters through data exposure, enabling pattern recognition and decision-making.</li>
+<li><strong>Importance in Finance:</strong> Effective training equips AI with the ability to manage complex financial operations efficiently.</li>
+<li><strong>Applications in Banking and Finance:</strong>
+<ul>
+<li><strong>Analyzing Financial Data:</strong> Models detect trends and anomalies.</li>
+<li><strong>Predicting Market Trends:</strong> AI forecasts stock prices and market behavior.</li>
+<li><strong>Automating Decision-Making:</strong> Handles credit approvals and investment choices.</li>
+</ul>
+</li>
+<li><strong>Emphasize:</strong> “<a href="https://editingdestiny.duckdns.org/ai-evaluation-best-practices" rel="noopener" target="_blank">Model Training</a>” is integral to optimizing financial systems.</li>
+</ul>
+<h2 id="section-3-supervised-fine-tuning-sft">Section 3: Supervised Fine-Tuning (SFT)</h2>
+<ul>
+<li><strong>SFT Defined:</strong> Fine-tunes pre-trained AI models using labeled data specific to tasks.</li>
+<li><strong>How SFT Works:</strong> It tailors a general model for specific tasks with relevant datasets.</li>
+<li><strong>Role in Finance:</strong>
+<ul>
+<li><strong>Credit Scoring Models:</strong> Fine-tuning to assess creditworthiness.</li>
+<li><strong>Fraud Detection Systems:</strong> Enhanced using known fraudulent and legitimate data.</li>
+<li><strong>Customer Segmentation:</strong> Models tailored for targeted marketing.</li>
+</ul>
+</li>
+<li><strong>Benefits:</strong>
+<ul>
+<li>Gains accuracy and task relevance.</li>
+<li>Reduces time and resources compared to building from scratch.</li>
+</ul>
+</li>
+<li><strong>Research Findings:</strong> SFT enhances AI capabilities in banking.<br/>
+<a href="https://www.coherentsolutions.com/insights/ai-in-financial-modeling-and-forecasting" rel="noopener" target="_blank">Source URL</a></li>
+</ul>
+<h2 id="section-4-reinforcement-learning-with-human-feedback-rlhf">Section 4: Reinforcement Learning with Human Feedback (RLHF)</h2>
+<ul>
+<li><strong>RLHF Defined:</strong> Marries machine learning with human input for improved AI performance.</li>
+<li><strong>How RLHF Works:</strong> Involves AI learning from a feedback loop that includes human guidance.</li>
+<li><strong>Applications in Finance:</strong>
+<ul>
+<li><strong>Trading Algorithms:</strong> AI evolves trading strategies with expert feedback.</li>
+<li><strong>Customer Service Chatbots:</strong> Adapt interactions based on feedback.</li>
+<li><strong>Risk Assessment Models:</strong> Leverages human expertise for precise predictions.</li>
+</ul>
+</li>
+<li><strong>Benefits:</strong>
+<ul>
+<li>Merges human intelligence with AI.</li>
+<li>Adapts effectively to financial challenges.</li>
+</ul>
+</li>
+<li><strong>Research Findings:</strong> RLHF showcases significant success in banking AI applications.<br/>
+<a href="https://thefinancialbrand.com/101442/artificial-intelligence-banking-ai-ml/" rel="noopener" target="_blank">Source URL</a></li>
+</ul>
+<h2 id="section-5-retrieval-augmented-generation-rag">Section 5: Retrieval-Augmented Generation (RAG)</h2>
+<ul>
+<li><strong>RAG Defined:</strong> Integrates information retrieval with text generation for precise results.</li>
+<li><strong>How RAG Works:</strong> AI retrieves pertinent data during content generation.</li>
+<li><strong>Utility in Banking:</strong>
+<ul>
+<li><strong>Financial Reports:</strong> Generates comprehensive reports with real-time data.</li>
+<li><strong>Customer Queries:</strong> Provides precise answers using updated info.</li>
+<li><strong>Regulatory Compliance:</strong> Aids compliance via relevant data retrievals.</li>
+</ul>
+</li>
+<li><strong>Benefits:</strong> Generates accurate, timely outputs by using current information.</li>
+<li><strong>Research Findings:</strong> RAG significantly boosts customer satisfaction in finance.<br/>
+<a href="https://emerj.com/ai-sector-overviews/ai-banking-applications/" rel="noopener" target="_blank">Source URL</a><br/>
+<a href="https://editingdestiny.duckdns.org/retrieval-augmented-generation-ai-revolution" rel="noopener" target="_blank">https://editingdestiny.duckdns.org/retrieval-augmented-generation-ai-revolution</a></li>
+</ul>
+<h2 id="section-6-search-agents-in-ai-data-management">Section 6: Search &amp; Agents in AI Data Management</h2>
+<ul>
+<li><strong>Search Algorithms and AI Agents Defined:</strong>
+<ul>
+<li><strong>Search Algorithms:</strong> Locate specific data swiftly.</li>
+<li><strong>AI Agents:</strong> Autonomous programs that perceive and act within environments.</li>
+</ul>
+</li>
+<li><strong>Functions in Data Management:</strong> Ensure efficient data handling and decision automation.</li>
+<li><strong>Applications in Finance:</strong>
+<ul>
+<li><strong><a href="https://editingdestiny.duckdns.org/ai-tools-financial-analysis" rel="noopener" target="_blank">Portfolio Management</a>:</strong> AI adjusts investments using real-time data.</li>
+<li><strong>Real-Time Analysis:</strong> Monitors markets for trends using search and analysis.</li>
+<li><strong>Automated Trading:</strong> Executes trades based on strategic algorithms.</li>
+</ul>
+</li>
+<li><strong>Benefits:</strong> Enhances responsiveness and operational efficiency in data handling.</li>
+<li><strong>Research Findings:</strong> Demonstrates enhanced trading efficiency through AI agents.<br/>
+<a href="https://www2.deloitte.com/us/en/insights/focus/cognitive-technologies/artificial-intelligence-financial-services.html" rel="noopener" target="_blank">Source URL</a></li>
+</ul>
+<h2 id="section-7-challenges-and-considerations-in-ai-data-management">Section 7: Challenges and Considerations in AI Data Management</h2>
+<ul>
+<li><strong>Data Privacy and Security:</strong>
+<ul>
+<li><strong>Issues:</strong> Threats like data breaches.</li>
+<li><strong>Solutions:</strong> Employ encryption and stringent access measures.</li>
+</ul>
+</li>
+<li><strong>Regulatory Compliance:</strong>
+<ul>
+<li><strong>Issues:</strong> Compliance with laws like GDPR.</li>
+<li><strong>Solutions:</strong> Integrate compliance checks within AI operations.</li>
+</ul>
+</li>
+<li><strong>Ethical Considerations:</strong>
+<ul>
+<li><strong>Issues:</strong> Avoiding biased AI decisions.</li>
+<li><strong>Solutions:</strong> Implement ethical frameworks and audits.</li>
+</ul>
+</li>
+<li><strong>Potential Biases in AI Models:</strong>
+<ul>
+<li><strong>Issues:</strong> Skewed decisions due to biased data.</li>
+<li><strong>Solutions:</strong> Use diverse datasets and employ model audits.</li>
+</ul>
+</li>
+<li><strong>Research Findings:</strong> Emphasizes the role of ethics in AI deployment in financial services.<br/>
+<a href="https://www.weforum.org/agenda/2020/01/ethical-ai-financial-services/" rel="noopener" target="_blank">Source URL</a></li>
+</ul>
+<h2 id="section-8-the-future-of-ai-in-banking-and-finance">Section 8: The Future of AI in Banking and Finance</h2>
+<ul>
+<li><strong>Upcoming Trends:</strong>
+<ul>
+<li><strong>Generative AI for Personalized Advice:</strong> Custom financial planning through AI.</li>
+<li><strong>Advanced Risk Management:</strong> Real-time AI-based monitoring.</li>
+<li><strong>Sophisticated Trading Systems:</strong> AI employed in high-frequency trading.</li>
+</ul>
+</li>
+<li><strong>Advancements in Model Training:</strong> Innovations in self-supervised and transfer learning methods.</li>
+<li><strong>Staying Ahead:</strong> Importance of embracing AI advancements for staying competitive.</li>
+<li><strong>Research Findings:</strong> Forecasts AI’s transformative impact on banking.<br/>
+<a href="https://bankingsummit.accenture.com/" rel="noopener" target="_blank">Source URL</a></li>
+</ul>
+<h2 id="conclusion">Conclusion</h2>
+<ul>
+<li><strong>Recap Importance of Model Training:</strong> Highlight the transformative impact of SFT, RLHF, and RAG on financial operations.</li>
+<li><strong>Emphasize Understanding:</strong> Grasping these cutting-edge technologies is imperative for maximizing AI potential.</li>
+<li><strong>Encourage Adaptation:</strong> Urge financial industries to keep abreast of AI advancements.</li>
+<li><strong>Balance Innovation and Responsibility:</strong> Stress the importance of embracing innovation while addressing challenges responsibly.</li>
+</ul>
+<p>Understanding and implementing model training is pivotal in unlocking AI’s potential in the banking and finance sector. Embracing advanced AI data management strategies, while balancing innovation with ethical responsibility, will be crucial for staying competitive in the industry.</p>
+</div>
+
+</article>
+<div class="post-nav"><a href="/2025/07/21/ai-transforming-banking-finance/">&larr; AI is Transforming Banking and Finance: Use Cases and Trends</a><a class="next" href="/2025/03/26/ai-evaluation-best-practices/">AI Evaluation: Best Practices for Testing and Assessing AI Systems &rarr;</a></div>
+<a href="/blog/" class="back">&larr; Back to writing</a>
+</main>
+<footer>
+&copy; 2026 Sudhanshu Deo &middot; <a href="/privacy-policy/">Privacy</a> &middot; <a href="/blog/">Blog</a>
+</footer>
+</body>
+</html>

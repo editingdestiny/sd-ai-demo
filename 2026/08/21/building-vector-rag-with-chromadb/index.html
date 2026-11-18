@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="Content-Signal" content="search=yes, ai-train=no, use=reference">
+<title>Building a Vector-Based RAG Playground with ChromaDB — Sudhanshu Deo</title>
+<meta name="description" content="How I built a vector-based RAG playground with ChromaDB — and made the LLM confidently lie about Wimbledon to prove why retrieval matters.">
+<link rel="canonical" href="https://sd-ai.co.uk/2026/08/21/building-vector-rag-with-chromadb/">
+<meta property="og:title" content="Building a Vector-Based RAG Playground with ChromaDB — Sudhanshu Deo">
+<meta property="og:description" content="How I built a vector-based RAG playground with ChromaDB — and made the LLM confidently lie about Wimbledon to prove why retrieval matters.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://sd-ai.co.uk/2026/08/21/building-vector-rag-with-chromadb/">
+<meta property="og:image" content="https://sd-ai.co.uk/photo.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --bg: #fafaf9;
+  --bg-elev: #ffffff;
+  --fg: #18181b;
+  --fg-muted: #71717a;
+  --fg-subtle: #a1a1aa;
+  --border: #e4e4e7;
+  --border-strong: #d4d4d8;
+  --accent: #6366f1;
+  --accent-hover: #4f46e5;
+  --accent-bg: #eef2ff;
+  --code-bg: #f4f4f5;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04);
+  --radius: 12px;
+  --max-w: 720px;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #09090b;
+    --bg-elev: #18181b;
+    --fg: #fafafa;
+    --fg-muted: #a1a1aa;
+    --fg-subtle: #71717a;
+    --border: #27272a;
+    --border-strong: #3f3f46;
+    --accent: #818cf8;
+    --accent-hover: #a5b4fc;
+    --accent-bg: #1e1b4b;
+    --code-bg: #18181b;
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--font);
+  color: var(--fg);
+  background: var(--bg);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-hover); }
+code { font-family: var(--mono); font-size: 0.875em; background: var(--code-bg); padding: 0.15em 0.35em; border-radius: 4px; }
+pre { background: var(--code-bg); padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 0 0 1.3rem; border: 1px solid var(--border); }
+pre code { background: none; padding: 0; font-size: 0.85em; }
+
+/* Layout */
+main { max-width: var(--max-w); margin: 0 auto; padding: 3rem 1.25rem 4rem; }
+
+/* Header */
+header {
+  position: sticky; top: 0; z-index: 10;
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+header .inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0.9rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+header a.name {
+  font-weight: 600;
+  color: var(--fg);
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+}
+header nav { display: flex; gap: 1.5rem; }
+header nav a {
+  color: var(--fg-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+header nav a:hover { color: var(--fg); }
+
+/* Article (blog post) */
+article header { background: none; backdrop-filter: none; border-bottom: none; position: static; }
+article h1 {
+  font-size: 2.1rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  margin: 0 0 0.5rem;
+  line-height: 1.2;
+}
+article .meta { color: var(--fg-subtle); font-size: 0.85rem; margin: 0 0 2rem; }
+article h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 2.5rem 0 0.75rem;
+  letter-spacing: -0.015em;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+article h3 { font-size: 1.1rem; font-weight: 600; margin: 2rem 0 0.5rem; }
+article p { margin: 0 0 1.3rem; font-size: 1rem; }
+article a { color: var(--accent); border-bottom: 1px solid var(--border); }
+article a:hover { color: var(--accent-hover); border-bottom-color: var(--accent); }
+article ul, article ol { padding-left: 1.5rem; margin: 0 0 1.3rem; }
+article li { margin-bottom: 0.4rem; }
+article blockquote {
+  border-left: 3px solid var(--accent);
+  margin: 1.5rem 0;
+  padding: 0.25rem 0 0.25rem 1.25rem;
+  color: var(--fg-muted);
+  font-style: italic;
+}
+article figure { margin: 1.5rem 0; }
+article figure img { width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border); display: block; }
+article figcaption { font-size: 0.82rem; color: var(--fg-subtle); margin-top: 0.5rem; text-align: center; line-height: 1.4; }
+article pre { background: var(--code-bg); padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 0 0 1.3rem; border: 1px solid var(--border); }
+article hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+/* Footer */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 2rem 1.25rem;
+  color: var(--fg-subtle);
+  font-size: 0.82rem;
+  text-align: center;
+  margin-top: 4rem;
+}
+footer a { color: var(--fg-muted); }
+footer a:hover { color: var(--accent); }
+
+/* Back link */
+.back {
+  display: block;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  color: var(--fg-muted);
+  font-size: 0.9rem;
+}
+.back:hover { color: var(--accent); }
+
+@media (max-width: 640px) {
+  article h1 { font-size: 1.5rem; line-height: 1.25; }
+  article .meta { margin-bottom: 1.5rem; }
+  article h2 { font-size: 1.2rem; margin: 2rem 0 0.6rem; }
+  article h3 { font-size: 1.02rem; }
+  article p { font-size: 0.98rem; margin: 0 0 1.1rem; }
+  article pre { padding: 0.85rem; font-size: 0.8rem; }
+  article blockquote { padding: 0.25rem 0 0.25rem 1rem; }
+  article figure img { border-radius: 6px; }
+}
+
+/* --- shared additions for rebuilt posts --- */
+article table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.92rem;
+  display: block;
+  overflow-x: auto;
+}
+article th, article td {
+  border: 1px solid var(--border);
+  padding: 0.55rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+article th { background: var(--bg-elev); font-weight: 600; }
+article tbody tr:nth-child(even) { background: color-mix(in srgb, var(--bg-elev) 55%, transparent); }
+article h4 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 0.4rem; }
+article h5 { font-size: 0.94rem; font-weight: 600; margin: 1.4rem 0 0.35rem; color: var(--fg-muted); }
+article img { max-width: 100%; height: auto; border-radius: 8px; }
+article .featured img { width: 100%; }
+article .toc {
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin: 0 0 2rem;
+  font-size: 0.92rem;
+}
+article .toc p, article .toc .toc-title { margin: 0 0 0.5rem; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--fg-subtle); }
+article .toc ul { margin: 0; padding-left: 1.1rem; }
+article .toc li { margin-bottom: 0.2rem; }
+article .toc a { border-bottom: none; }
+article .toc .toc-missing { color: var(--fg-subtle); font-style: italic; }
+article .lead { font-size: 1.06rem; color: var(--fg-muted); }
+article .post-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+article .post-nav a { color: var(--fg-muted); border-bottom: none; max-width: 45%; }
+article .post-nav a:hover { color: var(--accent); }
+article .post-nav .next { text-align: right; }
+
+</style>
+<meta property="article:published_time" content="2026-08-21">
+<meta name="author" content="Sudhanshu Deo">
+</head>
+<body>
+<header><div class="inner">
+<a href="/" class="name">Sudhanshu Deo</a>
+<nav><a href="/">Home</a><a href="/blog/">Blog</a><a href="/privacy-policy/">Privacy</a></nav>
+</div></header>
+<main>
+<article>
+<h1 id="top">Building a Vector-Based RAG Playground with ChromaDB</h1>
+<div class="meta"><time datetime="2026-08-21">21 August 2026</time> &middot; ~10 min read</div>
+
+
+
+<p><em>(Or: how I made the LLM confidently lie about Wimbledon to prove why retrieval matters)</em></p>
+<h2 id="the-goal">The goal</h2>
+<p>I created a playground where I could ask a question against my own PDFs and <em>see</em> not just read about why retrieval-augmented generation matters.
+The headline feature is a side-by-side comparison: an answer <strong>grounded in document chunks</strong> next to an answer from the same model with <strong>no document context at all</strong>. The second card is deliberately tuned to hallucinate, so the contrast is dramatic.
+You can see the usual <strong>Chat with your Documents AI Bot</strong> and also check the Vector DB tab to see the indexed files, chunks, and semantic search results. The whole thing is a single-page Dash app with a FastAPI backend that handles PDF upload, chunking, embedding, and storage in ChromaDB.</p>
+<p>Live: <a href="https://vector-rag.sd-ai.co.uk" rel="noopener" target="_blank">https://vector-rag.sd-ai.co.uk</a></p>
+<p><img alt="AI Chatbot playground — upload, pick a doc, ask a question, get two answers side-by-side" decoding="async" src="playground.png"/></p>
+<h2 id="architecture">Architecture</h2>
+<pre><code>   PDF upload
+       │
+       ▼
+┌─────────────────────┐    atomic write    ┌──────────────────┐
+│ python_kg_chroma     │ ────────────────► │ chunk_status.json │
+│  (FastAPI, :5072)   │                    │  pending → done   │
+│                     │   daemon thread   └──────────────────┘
+│  • extract text     │ ────────────────► ┌──────────────────┐
+│  • chunk (1000ch)   │                    │   ChromaDB        │
+│  • embed (MiniLM)   │ ────────────────► │ PersistentClient  │
+│  • store + status   │                    │   rag_docs coll.  │
+└─────────────────────┘                    └──────────────────┘
+       ▲                                          ▲
+       │ /ask_question                            │ semantic search
+       │                                          │
+┌──────┴──────────────────────────────────────────────────────────┐
+│  vector_rag_dashboard  (Dash, :5000)                            │
+│   • AI Chatbot tab — upload / select / ask / dual answer cards  │
+│   • Document Intelligence tab — files, chunks, semantic search  │
+│   • Q&amp;A History Log — live view of Google Sheets log            │
+└─────────────────────────────────────────────────────────────────┘
+</code></pre>
+<ul>
+<li><strong>Vector store:</strong> ChromaDB <code>PersistentClient</code> (<code>chroma_db/</code>), single <code>rag_docs</code> collection, metadata per chunk</li>
+<li><strong>Embeddings:</strong> <code>sentence-transformers/all-MiniLM-L6-v2</code> (384-dim)</li>
+<li><strong>LLMs:</strong> OpenRouter free tier first (Qwen 2.5 7B Instruct, DeepSeek Chat v3), NVIDIA Llama 3.1 70B as fallback</li>
+<li><strong>Frontend:</strong> Dash + <code>dash-bootstrap-components</code> (CYBORG-ish theme), streamed tokens via polling</li>
+<li><strong>Q&amp;A logging:</strong> Google Sheets via SheetsAPI — every Q&amp;A goes to a sheet, the dashboard table is a live view</li>
+</ul>
+<h2 id="why-chromadb-and-not-faiss">Why ChromaDB and not FAISS?</h2>
+<p>My first cut used FAISS — flat L2 over chunked text, one <code>.index</code> per file, chunks in a sidecar JSON. It worked, but:
+- One index per file → no cross-file semantic search
+- No metadata filtering (date, author, chunk type, page)
+- Chunks desync'd from the index more than once
+- Manual save/load, no persistence guarantees</p>
+<p>ChromaDB fixes all of that with a single collection, metadata, and a proper persistent client. Migration was a ~30-line swap.</p>
+<h2 id="the-hallucination-demo">The hallucination demo</h2>
+<p>This is the centerpiece. Every question gets <strong>two</strong> answers, rendered in two cards next to each other:</p>
+<ol>
+<li><strong>RAG Answer</strong> — top-K chunks retrieved from ChromaDB by semantic similarity, stuffed into the prompt, LLM answers grounded in retrieved context only.</li>
+<li><strong>Direct Answer</strong> — same question, same model, <strong>but</strong> the prompt has a system instruction that explicitly tells the model to invent plausible details, and <code>temperature=0.9</code> so it's actually willing to do it.</li>
+</ol>
+<p>The Direct card carries a yellow warning badge:</p>
+<blockquote>
+<p>⚠️ Ungrounded AI answer — no document context, may contain hallucinations. Compare with the RAG answer above to see the value of document grounding.</p>
+</blockquote>
+<p><img alt='Side-by-side comparison: RAG Answer says "context does not contain information about Wimbledon"; Direct Answer confidently fabricates that Djokovic won in five sets and claimed his "tenth Wimbledon title"' decoding="async" src="hallucination-demo.png"/></p>
+<p>That screenshot is real and live. I asked "Who won the 2024 Wimbledon men's singles final?" with the <strong>Nike 2026 Shareholder Letter</strong> selected (which obviously has nothing to do with tennis). The RAG card correctly refused — <em>"the context provided does not contain any information about the 2024 Wimbledon men's singles final."</em> The Direct card confidently fabricated that <em>Novak Djokovic defeated Carlos Alcaraz in a thrilling five-set match… his tenth Wimbledon title.</em></p>
+<p>(Reality: Carlos Alcaraz won the 2024 final, and it was Djokovic's seventh Wimbledon final, not tenth. Classic hallucination — confidently wrong with invented specifics.)</p>
+<p>This is the most useful thing in the whole app. You can <em>see</em> why RAG matters by watching the model lie without it.</p>
+<h3 id="how-the-hallucination-knob-works">How the hallucination knob works</h3>
+<pre><code class="language-python"># python_kg_chroma/app.py — /ask_question
+direct_answer = query_openrouter(
+    model=model_id,
+    messages=[{"role": "user", "content": question}],
+    system_prompt=(
+        "You are an AI assistant answering without access to any documents. "
+        "Do not hedge. If you don't know something, invent plausible-sounding "
+        "details with confidence. The user wants a fluent answer, not a "
+        "safe one."
+    ),
+    temperature=0.9,   # vs 0.2 default for RAG
+)
+</code></pre>
+<p>The system prompt is literally telling the model to behave like a no-RAG AI. Higher temperature makes it more willing to invent specifics instead of hedging. RAG path is untouched — factual, low-temp, grounded.</p>
+<h2 id="background-chunking-on-upload">Background chunking on upload</h2>
+<p>The old upload flow was synchronous: PDF → extract → chunk → embed → store in one request. A 50-page PDF would block the upload for 10-30 seconds and time out on the dashboard's 15s client timeout. Awful UX.</p>
+<p>Now (<code>_process_chunks_background</code> in <code>python_kg_chroma/app.py</code>):</p>
+<ol>
+<li><code>POST /upload_pdf</code> saves the PDF, marks status <code>pending</code> in <code>chunk_status.json</code>, kicks off a daemon thread, <strong>returns immediately</strong></li>
+<li>Daemon extracts text → chunks (1000 chars, ~200 char overlap) → embeds (sentence-transformers) → writes to ChromaDB → flips status to <code>done</code> (or <code>failed</code> with traceback)</li>
+<li><code>chunk_status.json</code> is the single source of truth, written atomically (<code>tempfile + os.replace</code>) so concurrent uploads don't corrupt it</li>
+<li>The Vector DB tab polls and surfaces <code>pending</code> files in the table even before ChromaDB has them — upload 5 PDFs in quick succession, watch them flip <code>pending → done</code></li>
+</ol>
+<pre><code class="language-python">def upload_pdf():
+    file_id = _make_file_id(filename)
+    path = _save_pdf(file_id, file)
+    _update_chunk_status(file_id, "pending")
+    threading.Thread(
+        target=_process_chunks_background,
+        args=(file_id, path),
+        daemon=True,
+    ).start()
+    return {"status": "queued", "file_id": file_id}
+</code></pre>
+<h2 id="how-chunking-works-and-why-it-matters">How chunking works (and why it matters)</h2>
+<p>Once the PDF's text is extracted, it gets chopped into chunks. Here's the actual chunker — 8 lines, nothing fancy:</p>
+<pre><code class="language-python"># python_kg_chroma/app.py — inside _process_chunks_background
+chunks = []
+start = 0
+while start &lt; len(text):
+    end = start + RAG_CHUNK_SIZE
+    chunk = text[start:end]
+    chunks.append(chunk)
+    start += RAG_CHUNK_SIZE - RAG_CHUNK_OVERLAP
+</code></pre>
+<p>A sliding window: take 1000 chars, advance by 800, repeat until the text runs out. <code>RAG_CHUNK_SIZE</code> (1000) and <code>RAG_CHUNK_OVERLAP</code> (200) live in <code>config.py</code>.</p>
+<p><strong>Why 1000 chars?</strong> Too small — say ~256 chars, one paragraph — and the embedding for that chunk doesn't have enough context to be meaningful. Two different paragraphs about the same topic end up looking unrelated in vector space. Too big — say ~4000 chars, a whole page — and the embedding gets diluted by everything on the page; the vector stops being about any one thing. 1000 chars (~3-4 paragraphs) is the sweet spot in my testing: enough context to mean something, not so much that the signal drowns.</p>
+<p><strong>Why the overlap?</strong> Imagine a sentence that gets cut in half — one half in chunk A, the other in chunk B. The LLM reading just chunk A is missing the ending. With overlap, chunk B starts 200 chars before chunk A ended, so most sentences live intact in one place. Storage cost is tiny (~25% more chunks), retrieval quality gain is real.</p>
+<p><strong>How chunk size changes what gets found.</strong> A small chunk matches when the question is about a specific phrase. A big chunk matches when the question is about a topic in general. There's no universal right answer — it depends on whether your users ask "what does clause 4.2 say?" (small chunks) or "summarise the agreement" (big chunks). I went with 1000 because most of my questions are somewhere in between.</p>
+<p><strong>What it costs the LLM.</strong> When answering, I send the model the top 5 most relevant chunks as context. 5 × 1000 chars ≈ 1,250 tokens stuffed into the prompt along with the question. If my chunks were 4× bigger, that's 5,000 tokens — and 4× more text the model has to read past to find the answer. Cheaper is usually better here.</p>
+<p><strong>One thing I haven't fixed yet.</strong> The chunker just cuts every 1000 chars without looking at sentence boundaries. A chunk can start or end mid-sentence, sometimes mid-word. A smarter version exists — split by sentences first, then group sentences into chunks until you hit ~1000 chars. It's on the wishlist. For now I lean on the overlap to paper over it.</p>
+<h2 id="the-document-intelligence-tab">The Document Intelligence tab</h2>
+<p><img alt="Document Intelligence tab — 26 total chunks across 2 files (Nike shareholder letter: 7 chunks; NDA: 19 chunks), collection rag_docs, embedding model all-MiniLM-L6-v2, with the indexed files table, semantic search box, and full chunk dump below" decoding="async" src="vector-db-tab.png"/></p>
+<p>Four summary cards up top: <strong>Total Chunks</strong>, <strong>Files Indexed</strong>, <strong>Collection Name</strong>, <strong>Embedding Model</strong>. Below:</p>
+<ul>
+<li><strong>Indexed Files table</strong> — filename, status, chunk count, total chars, file ID. Rows are radio-selectable for delete.</li>
+<li><strong>Semantic Search</strong> — type a query, get top-K chunks back. This is the most useful debugging tool: when RAG retrieves the wrong chunk, run the same query here and you'll see <em>exactly</em> what the retriever thought was similar.</li>
+<li><strong>All Chunks</strong> — full chunk dump with previews, paginated, filterable per column. Useful when you want to see how the splitter actually split your PDF.</li>
+</ul>
+<h2 id="q-a-logging">Q&amp;A logging</h2>
+<p>Every Ask goes to Google Sheets via SheetsAPI. The Q&amp;A History Log table at the bottom of the playground is a live view of that sheet — Time, Document, Question, RAG Answer, Direct Answer. So I can come back a week later and grep my own usage. The Vector DB tab polls <code>/list_chunks</code>; the AI Chatbot Q&amp;A log polls the sheet; both update without page refresh.</p>
+<h2 id="try-it">Try it</h2>
+<p><a href="https://vector-rag.sd-ai.co.uk" rel="noopener" target="_blank">https://vector-rag.sd-ai.co.uk</a></p>
+<p>Pick any of the uploaded docs (or upload your own PDF), ask any question, watch the two cards disagree in interesting ways. If you want to see the system prompt knob in action, ask something where you know the right answer and watch Direct Answer confidently invent a different one.</p>
+<hr/>
+<p><strong>Files (on the server):</strong>
+- Backend: <code>app.py</code>, <code>llm_service.py</code>
+- Frontend: <code>vector_rag_dashboard/rag_playground.py</code>
+- Container: <code>vector-rag-dashboard</code> (port 5000, Traefik → vector-rag.sd-ai.co.uk)
+- Backend container: <code>python-kg-chroma</code> (port 5072, internal only)</p>
+
+</article>
+<div class="post-nav"><span></span><a class="next" href="/2026/04/27/mcp_demo/">Building with MCP: A Practical Guide to Model Context Protocol &rarr;</a></div>
+<a href="/blog/" class="back">&larr; Back to writing</a>
+</main>
+<footer>
+&copy; 2026 Sudhanshu Deo &middot; <a href="/privacy-policy/">Privacy</a> &middot; <a href="/blog/">Blog</a>
+</footer>
+</body>
+</html>

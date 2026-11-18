@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://sd-ai.co.uk/sitemap.xml

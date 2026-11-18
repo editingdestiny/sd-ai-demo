@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="Content-Signal" content="search=yes, ai-train=no, use=reference">
+<title>AI-Powered PPT Generator — Sudhanshu Deo</title>
+<meta name="description" content="Building Slider: a FastAPI, n8n and python-pptx service that turns a search phrase into a downloadable PowerPoint deck, and the bugs that nearly killed it.">
+<link rel="canonical" href="https://sd-ai.co.uk/2025/09/07/ai-powered-ppt/">
+<meta property="og:title" content="AI-Powered PPT Generator — Sudhanshu Deo">
+<meta property="og:description" content="Building Slider: a FastAPI, n8n and python-pptx service that turns a search phrase into a downloadable PowerPoint deck, and the bugs that nearly killed it.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://sd-ai.co.uk/2025/09/07/ai-powered-ppt/">
+<meta property="og:image" content="https://sd-ai.co.uk/photo.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --bg: #fafaf9;
+  --bg-elev: #ffffff;
+  --fg: #18181b;
+  --fg-muted: #71717a;
+  --fg-subtle: #a1a1aa;
+  --border: #e4e4e7;
+  --border-strong: #d4d4d8;
+  --accent: #6366f1;
+  --accent-hover: #4f46e5;
+  --accent-bg: #eef2ff;
+  --code-bg: #f4f4f5;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04);
+  --radius: 12px;
+  --max-w: 720px;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #09090b;
+    --bg-elev: #18181b;
+    --fg: #fafafa;
+    --fg-muted: #a1a1aa;
+    --fg-subtle: #71717a;
+    --border: #27272a;
+    --border-strong: #3f3f46;
+    --accent: #818cf8;
+    --accent-hover: #a5b4fc;
+    --accent-bg: #1e1b4b;
+    --code-bg: #18181b;
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--font);
+  color: var(--fg);
+  background: var(--bg);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-hover); }
+code { font-family: var(--mono); font-size: 0.875em; background: var(--code-bg); padding: 0.15em 0.35em; border-radius: 4px; }
+pre { background: var(--code-bg); padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 0 0 1.3rem; border: 1px solid var(--border); }
+pre code { background: none; padding: 0; font-size: 0.85em; }
+
+/* Layout */
+main { max-width: var(--max-w); margin: 0 auto; padding: 3rem 1.25rem 4rem; }
+
+/* Header */
+header {
+  position: sticky; top: 0; z-index: 10;
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+header .inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0.9rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+header a.name {
+  font-weight: 600;
+  color: var(--fg);
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+}
+header nav { display: flex; gap: 1.5rem; }
+header nav a {
+  color: var(--fg-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+header nav a:hover { color: var(--fg); }
+
+/* Article (blog post) */
+article header { background: none; backdrop-filter: none; border-bottom: none; position: static; }
+article h1 {
+  font-size: 2.1rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  margin: 0 0 0.5rem;
+  line-height: 1.2;
+}
+article .meta { color: var(--fg-subtle); font-size: 0.85rem; margin: 0 0 2rem; }
+article h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 2.5rem 0 0.75rem;
+  letter-spacing: -0.015em;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+article h3 { font-size: 1.1rem; font-weight: 600; margin: 2rem 0 0.5rem; }
+article p { margin: 0 0 1.3rem; font-size: 1rem; }
+article a { color: var(--accent); border-bottom: 1px solid var(--border); }
+article a:hover { color: var(--accent-hover); border-bottom-color: var(--accent); }
+article ul, article ol { padding-left: 1.5rem; margin: 0 0 1.3rem; }
+article li { margin-bottom: 0.4rem; }
+article blockquote {
+  border-left: 3px solid var(--accent);
+  margin: 1.5rem 0;
+  padding: 0.25rem 0 0.25rem 1.25rem;
+  color: var(--fg-muted);
+  font-style: italic;
+}
+article figure { margin: 1.5rem 0; }
+article figure img { width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border); display: block; }
+article figcaption { font-size: 0.82rem; color: var(--fg-subtle); margin-top: 0.5rem; text-align: center; line-height: 1.4; }
+article pre { background: var(--code-bg); padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 0 0 1.3rem; border: 1px solid var(--border); }
+article hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+/* Footer */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 2rem 1.25rem;
+  color: var(--fg-subtle);
+  font-size: 0.82rem;
+  text-align: center;
+  margin-top: 4rem;
+}
+footer a { color: var(--fg-muted); }
+footer a:hover { color: var(--accent); }
+
+/* Back link */
+.back {
+  display: block;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  color: var(--fg-muted);
+  font-size: 0.9rem;
+}
+.back:hover { color: var(--accent); }
+
+@media (max-width: 640px) {
+  article h1 { font-size: 1.5rem; line-height: 1.25; }
+  article .meta { margin-bottom: 1.5rem; }
+  article h2 { font-size: 1.2rem; margin: 2rem 0 0.6rem; }
+  article h3 { font-size: 1.02rem; }
+  article p { font-size: 0.98rem; margin: 0 0 1.1rem; }
+  article pre { padding: 0.85rem; font-size: 0.8rem; }
+  article blockquote { padding: 0.25rem 0 0.25rem 1rem; }
+  article figure img { border-radius: 6px; }
+}
+
+/* --- shared additions for rebuilt posts --- */
+article table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.92rem;
+  display: block;
+  overflow-x: auto;
+}
+article th, article td {
+  border: 1px solid var(--border);
+  padding: 0.55rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+article th { background: var(--bg-elev); font-weight: 600; }
+article tbody tr:nth-child(even) { background: color-mix(in srgb, var(--bg-elev) 55%, transparent); }
+article h4 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 0.4rem; }
+article h5 { font-size: 0.94rem; font-weight: 600; margin: 1.4rem 0 0.35rem; color: var(--fg-muted); }
+article img { max-width: 100%; height: auto; border-radius: 8px; }
+article .featured img { width: 100%; }
+article .toc {
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin: 0 0 2rem;
+  font-size: 0.92rem;
+}
+article .toc p, article .toc .toc-title { margin: 0 0 0.5rem; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--fg-subtle); }
+article .toc ul { margin: 0; padding-left: 1.1rem; }
+article .toc li { margin-bottom: 0.2rem; }
+article .toc a { border-bottom: none; }
+article .toc .toc-missing { color: var(--fg-subtle); font-style: italic; }
+article .lead { font-size: 1.06rem; color: var(--fg-muted); }
+article .post-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+article .post-nav a { color: var(--fg-muted); border-bottom: none; max-width: 45%; }
+article .post-nav a:hover { color: var(--accent); }
+article .post-nav .next { text-align: right; }
+
+</style>
+<meta property="article:published_time" content="2025-09-07">
+<meta name="author" content="Sudhanshu Deo">
+</head>
+<body>
+<header><div class="inner">
+<a href="/" class="name">Sudhanshu Deo</a>
+<nav><a href="/">Home</a><a href="/blog/">Blog</a><a href="/privacy-policy/">Privacy</a></nav>
+</div></header>
+<main>
+<article>
+<h1 id="top">AI-Powered PPT Generator</h1>
+<div class="meta"><time datetime="2025-09-07">7 September 2025</time> &middot; ~9 min read</div>
+
+
+
+<div class="featured"><img alt="AI-Powered PPT Generator" decoding="async" src="/media/2025/09/slider.png"/></div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<img alt="" decoding="async" fetchpriority="high" height="655" src="/media/2025/09/slider.png" width="544"/> </div>
+</div>
+<div>
+<p>What if there is a product which can take your idea, do the research, find the relevant fact &amp; figures and then use that data into nicely crafted PowerPoint presentation?<br/>Almost everyone is using AI (LLMs) to do the research, however, while research has been automated, presentation is not and I personally find it significantly time consuming to create a PowerPoint presentation. So I applied my limited knowledge of AI-driven automation to see if this chore can be automated (90% I would aim for).</p><p>This question was the spark for <strong>Slider</strong>, a web application designed to do just that: turn a single search phrase into a fully-formed, downloadable PowerPoint presentation. This is the story of its development—a journey from a simple idea to a robust, resilient web service, fraught with subtle bugs, architectural pivots, and invaluable lessons in software engineering.</p><h2 id="chapter-1-the-spark-of-an-idea-the-why">Chapter 1: The Spark of an Idea (The “Why”)</h2><p>The initial goal was ambitious but clear: create a tool that automates the entire presentation creation pipeline. A user should be able to provide a topic, say, “The Future of Renewable Energy,” and in return, receive a “.pptx” file complete with a title slide, content slides with key points, and even data visualizations like charts and tables. The aim was to save hours of manual work and provide a solid, editable foundation that users could then refine.</p><h2 id="chapter-2-the-initial-architecture-the-how">Chapter 2: The Initial Architecture (The “How”)</h2><p>To bring this idea to life, I settled on a modern, decoupled architecture:</p><ul><li><ul><li><strong>Frontend:</strong> A simple HTML form with a sprinkle of vanilla JavaScript.</li><li><strong>Backend:</strong> A Python server using <strong>FastAPI</strong>.</li><li><strong>The AI &amp; Orchestration Layer:</strong> Leveraging <strong>n8n</strong> for workflow automation.</li><li><strong>The Presentation Generator:</strong> <code>python-pptx</code> for building slides.</li></ul></li></ul><h3 id="the-n8n-workflow">The n8n Workflow</h3><ul><li><ol><li>FastAPI calls an n8n webhook with the search phrase.</li><li>n8n generates structured JSON (titles, bullets, mock chart data).</li><li>JSON is passed back to FastAPI, which builds the presentation.</li></ol></li></ul> </div>
+<div>
+<div>
+<img alt="" decoding="async" height="445" src="/media/2025/09/ai_agent-1024x445.png" width="1024"/> </div>
+</div>
+<div>
+
+<h2 id="chapter-3-first-blood-the-division-by-zero-bug">Chapter 3: First Blood – The “Division by Zero” Bug</h2>
+<blockquote>Error creating presentation: float floor division by zero</blockquote>
+Matplotlib choked when AI returned empty data for charts. Fix: validate chart data before rendering.
+<h2 id="chapter-4-the-silent-killer-the-timeout-issue">Chapter 4: The Silent Killer – The Timeout Issue</h2>
+httpx default timeout (60s) killed long AI workflows. Fix:
+<pre><code>async with httpx.AsyncClient(timeout=None) as client:
+    response = await client.post(N8N_WEBHOOK_URL, json=webhook_payload)</code></pre>
+<h2 id="chapter-5-improving-the-user-experience-the-feel">Chapter 5: Improving the User Experience (The “Feel”)</h2>
+Fixing backend logic wasn’t enough—the real bottleneck was how it <em>felt</em> to users.
+An app that quietly sits there for minutes without feedback is indistinguishable from one that’s broken.
+I knew I had to design for <strong>perceived performance</strong>, not just raw speed.
+
+This led to the introduction of a <strong>dynamic loading system</strong>:
+<ul>
+<li>A spinner to visually confirm that the request was in progress.</li>
+<li>Rotating status updates such as <em>“Contacting AI assistant…”</em>, <em>“Generating slides…”</em>, and <em>“Almost done…”</em>.</li>
+<li>Clear error messages if something failed, so users weren’t left guessing.</li>
+</ul>
+This turned waiting into an <strong>interactive experience</strong> rather than a frustrating black hole.
+Users reported that even if it took a couple of minutes, they trusted the process because they could “see” progress happening.
+
+The takeaway: sometimes the difference between a tool that feels clunky and one that feels professional isn’t speed—it’s
+<strong>communication</strong>.
+
+
+<h2 id="chapter-6-the-devil-in-the-details-fonts-and-aesthetics">Chapter 6: The Devil in the Details – Fonts and Aesthetics</h2>
+Once the system was stable, smaller issues came into focus—and they mattered more than I expected.
+
+<strong>Font issues:</strong> My Docker container didn’t include the <code>Segoe UI</code> font that PowerPoint defaults to.
+As a result, charts rendered with odd-looking fallback fonts, making them look unpolished.
+The fix was to install fonts and rebuild the font cache inside the container.
+
+<strong>Invisible text bug:</strong> Some slides came out with black text on dark backgrounds.
+This wasn’t a crash—it was worse, because users thought the tool worked, but the slides were unreadable.
+The workaround was a brute-force loop that:
+<ul>
+<li>Iterated through every shape on every slide.</li>
+<li>Explicitly set the font color to white.</li>
+<li>Enforced consistent readability across the deck.</li>
+</ul>
+This phase drove home the lesson that <strong>polish matters</strong>.
+The difference between a hacky prototype and a product people actually use often lies in those small, edge-case fixes that
+elevate the experience.
+<pre><code>def is_valid_pptx(file_content: bytes) -&gt; bool:
+    if not file_content:
+        return False
+    try:
+        file_stream = io.BytesIO(file_content)
+        Presentation(file_stream)
+        return True
+    except Exception:
+        return False</code></pre>
+<h2 id="conclusion-lessons-learned-and-the-road-ahead">Conclusion: Lessons Learned and The Road Ahead</h2>
+<ul>
+<li><strong>Defensive Programming:</strong> Validate all data.</li>
+<li><strong>Know Your Tools:</strong> Defaults matter (timeouts, libraries).</li>
+<li><strong>User Experience is Paramount:</strong> Feedback beats silence.</li>
+<li><strong>Build for Failure:</strong> Handle errors gracefully.</li>
+</ul>
+The road ahead for Slider is exciting—more layouts, authentication, maybe Google Slides integration. But the foundation is now strong, built not just on code, but on lessons from every bug squashed.
+
+<hr/>
+<em>You can check out the source code for this project on <a href="https://github.com/editingdestiny/slider" rel="noopener" target="_blank">GitHub</a>. What features would you like to see next? Let me know in the comments!</em> </div>
+</div>
+</div>
+</div>
+
+</article>
+<div class="post-nav"><a href="/2025/10/12/understanding-ai-agents-vs-orchestrated-workflows/">&larr; Understanding AI Agents vs Orchestrated Workflows</a><a class="next" href="/2025/08/20/defining-fidelity-risk-in-ai-document-processing/">Defining Fidelity Risk in AI Document Processing &rarr;</a></div>
+<a href="/blog/" class="back">&larr; Back to writing</a>
+</main>
+<footer>
+&copy; 2026 Sudhanshu Deo &middot; <a href="/privacy-policy/">Privacy</a> &middot; <a href="/blog/">Blog</a>
+</footer>
+</body>
+</html>

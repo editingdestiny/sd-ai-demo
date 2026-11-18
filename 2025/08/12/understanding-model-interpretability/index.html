@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="Content-Signal" content="search=yes, ai-train=no, use=reference">
+<title>Understanding Model Interpretability — Sudhanshu Deo</title>
+<meta name="description" content="What interpretability means in practice, from LIME and SHAP to attention analysis, and why an explanation is not the same as a model&#x27;s reasoning.">
+<link rel="canonical" href="https://sd-ai.co.uk/2025/08/12/understanding-model-interpretability/">
+<meta property="og:title" content="Understanding Model Interpretability — Sudhanshu Deo">
+<meta property="og:description" content="What interpretability means in practice, from LIME and SHAP to attention analysis, and why an explanation is not the same as a model&#x27;s reasoning.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://sd-ai.co.uk/2025/08/12/understanding-model-interpretability/">
+<meta property="og:image" content="https://sd-ai.co.uk/photo.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --bg: #fafaf9;
+  --bg-elev: #ffffff;
+  --fg: #18181b;
+  --fg-muted: #71717a;
+  --fg-subtle: #a1a1aa;
+  --border: #e4e4e7;
+  --border-strong: #d4d4d8;
+  --accent: #6366f1;
+  --accent-hover: #4f46e5;
+  --accent-bg: #eef2ff;
+  --code-bg: #f4f4f5;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04);
+  --radius: 12px;
+  --max-w: 720px;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #09090b;
+    --bg-elev: #18181b;
+    --fg: #fafafa;
+    --fg-muted: #a1a1aa;
+    --fg-subtle: #71717a;
+    --border: #27272a;
+    --border-strong: #3f3f46;
+    --accent: #818cf8;
+    --accent-hover: #a5b4fc;
+    --accent-bg: #1e1b4b;
+    --code-bg: #18181b;
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--font);
+  color: var(--fg);
+  background: var(--bg);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-hover); }
+code { font-family: var(--mono); font-size: 0.875em; background: var(--code-bg); padding: 0.15em 0.35em; border-radius: 4px; }
+pre { background: var(--code-bg); padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 0 0 1.3rem; border: 1px solid var(--border); }
+pre code { background: none; padding: 0; font-size: 0.85em; }
+
+/* Layout */
+main { max-width: var(--max-w); margin: 0 auto; padding: 3rem 1.25rem 4rem; }
+
+/* Header */
+header {
+  position: sticky; top: 0; z-index: 10;
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+header .inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0.9rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+header a.name {
+  font-weight: 600;
+  color: var(--fg);
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+}
+header nav { display: flex; gap: 1.5rem; }
+header nav a {
+  color: var(--fg-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+header nav a:hover { color: var(--fg); }
+
+/* Article (blog post) */
+article header { background: none; backdrop-filter: none; border-bottom: none; position: static; }
+article h1 {
+  font-size: 2.1rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  margin: 0 0 0.5rem;
+  line-height: 1.2;
+}
+article .meta { color: var(--fg-subtle); font-size: 0.85rem; margin: 0 0 2rem; }
+article h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 2.5rem 0 0.75rem;
+  letter-spacing: -0.015em;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+article h3 { font-size: 1.1rem; font-weight: 600; margin: 2rem 0 0.5rem; }
+article p { margin: 0 0 1.3rem; font-size: 1rem; }
+article a { color: var(--accent); border-bottom: 1px solid var(--border); }
+article a:hover { color: var(--accent-hover); border-bottom-color: var(--accent); }
+article ul, article ol { padding-left: 1.5rem; margin: 0 0 1.3rem; }
+article li { margin-bottom: 0.4rem; }
+article blockquote {
+  border-left: 3px solid var(--accent);
+  margin: 1.5rem 0;
+  padding: 0.25rem 0 0.25rem 1.25rem;
+  color: var(--fg-muted);
+  font-style: italic;
+}
+article figure { margin: 1.5rem 0; }
+article figure img { width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border); display: block; }
+article figcaption { font-size: 0.82rem; color: var(--fg-subtle); margin-top: 0.5rem; text-align: center; line-height: 1.4; }
+article pre { background: var(--code-bg); padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 0 0 1.3rem; border: 1px solid var(--border); }
+article hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+/* Footer */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 2rem 1.25rem;
+  color: var(--fg-subtle);
+  font-size: 0.82rem;
+  text-align: center;
+  margin-top: 4rem;
+}
+footer a { color: var(--fg-muted); }
+footer a:hover { color: var(--accent); }
+
+/* Back link */
+.back {
+  display: block;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  color: var(--fg-muted);
+  font-size: 0.9rem;
+}
+.back:hover { color: var(--accent); }
+
+@media (max-width: 640px) {
+  article h1 { font-size: 1.5rem; line-height: 1.25; }
+  article .meta { margin-bottom: 1.5rem; }
+  article h2 { font-size: 1.2rem; margin: 2rem 0 0.6rem; }
+  article h3 { font-size: 1.02rem; }
+  article p { font-size: 0.98rem; margin: 0 0 1.1rem; }
+  article pre { padding: 0.85rem; font-size: 0.8rem; }
+  article blockquote { padding: 0.25rem 0 0.25rem 1rem; }
+  article figure img { border-radius: 6px; }
+}
+
+/* --- shared additions for rebuilt posts --- */
+article table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.92rem;
+  display: block;
+  overflow-x: auto;
+}
+article th, article td {
+  border: 1px solid var(--border);
+  padding: 0.55rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+article th { background: var(--bg-elev); font-weight: 600; }
+article tbody tr:nth-child(even) { background: color-mix(in srgb, var(--bg-elev) 55%, transparent); }
+article h4 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 0.4rem; }
+article h5 { font-size: 0.94rem; font-weight: 600; margin: 1.4rem 0 0.35rem; color: var(--fg-muted); }
+article img { max-width: 100%; height: auto; border-radius: 8px; }
+article .featured img { width: 100%; }
+article .toc {
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin: 0 0 2rem;
+  font-size: 0.92rem;
+}
+article .toc p, article .toc .toc-title { margin: 0 0 0.5rem; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--fg-subtle); }
+article .toc ul { margin: 0; padding-left: 1.1rem; }
+article .toc li { margin-bottom: 0.2rem; }
+article .toc a { border-bottom: none; }
+article .toc .toc-missing { color: var(--fg-subtle); font-style: italic; }
+article .lead { font-size: 1.06rem; color: var(--fg-muted); }
+article .post-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+article .post-nav a { color: var(--fg-muted); border-bottom: none; max-width: 45%; }
+article .post-nav a:hover { color: var(--accent); }
+article .post-nav .next { text-align: right; }
+
+</style>
+<meta property="article:published_time" content="2025-08-12">
+<meta name="author" content="Sudhanshu Deo">
+</head>
+<body>
+<header><div class="inner">
+<a href="/" class="name">Sudhanshu Deo</a>
+<nav><a href="/">Home</a><a href="/blog/">Blog</a><a href="/privacy-policy/">Privacy</a></nav>
+</div></header>
+<main>
+<article>
+<h1 id="top">Understanding Model Interpretability</h1>
+<div class="meta"><time datetime="2025-08-12">12 August 2025</time> &middot; ~7 min read</div>
+
+
+<figure></figure>
+<p>In the era of artificial intelligence and machine learning, understanding how models make decisions has become crucial for ensuring transparency and trust. Model interpretability techniques like Partial Dependence Plots (PDP), Individual Conditional Expectation (ICE), Local Interpretable Model-agnostic Explanations (LIME), and SHapley Additive exPlanations (SHAP) provide powerful tools to peek inside the black box of complex algorithms.</p>
+<p>The pursuit of transparent artificial intelligence has never been more critical. As organizations deploy increasingly sophisticated algorithms across high-stakes domains, the demand for <a href="https://arxiv.org/abs/2305.14897" rel="noopener" target="_blank">model interpretability</a> has transcended academic curiosity to become a regulatory and ethical imperative. Understanding how models make decisions is no longer optional—it’s essential for building trust, ensuring fairness, and maintaining accountability in our AI-driven world.</p>
+<p><b>Model interpretability</b> addresses the fundamental challenge of making <i>black box</i> systems comprehensible to human stakeholders. When a loan application is denied, a medical diagnosis is suggested, or a hiring decision is influenced by algorithmic recommendations, affected parties deserve meaningful explanations. This transparency serves multiple constituencies: end-users seeking justification for decisions that impact their lives, practitioners needing to debug and improve model performance, and regulators ensuring compliance with emerging AI governance frameworks.</p>
+<p>The interpretability landscape encompasses diverse methodological approaches, each with distinct strengths and limitations. <a href="https://christophm.github.io/interpretable-ml-book/pdp.html" rel="noopener" target="_blank">Partial Dependence Plots</a> reveal how individual features influence predictions across the entire dataset, while <a href="https://lime-ml.readthedocs.io/en/latest/" rel="noopener" target="_blank">LIME</a> provides localized explanations by approximating complex models with simpler, interpretable surrogates around specific instances. <a href="https://shap.readthedocs.io/en/latest/" rel="noopener" target="_blank">SHAP</a> leverages game theory to assign fair attribution scores to features, and Individual Conditional Expectation curves show how feature changes affect individual predictions, complementing the averaged perspectives of PDPs.</p>
+<p>These techniques operate along a spectrum from <i>global interpretability</i>—understanding overall model behavior—to <i>local interpretability</i>—explaining specific predictions. The choice of method depends critically on context: regulatory compliance often demands consistent, theoretically grounded approaches like SHAP, while rapid prototyping might favor faster but less robust techniques like LIME. Success requires matching interpretability tools to specific stakeholder needs, model types, and deployment constraints while acknowledging that no single approach provides complete transparency into complex algorithmic decision-making.</p>
+<h2 id="partial-dependence-plots-pdp"><strong>Partial Dependence Plots (PDP)</strong></h2>
+<p>Based on the previous chapter’s discussion of model interpretability importance, <a href="https://example.com/pdp-methodology" rel="noopener" target="_blank">Partial Dependence Plots (PDPs)</a> emerge as a fundamental technique for understanding how individual features influence model predictions. PDPs visualize the <strong>marginal effect</strong> of one or more features by averaging the model’s predictions across all possible values of other features, effectively isolating the relationship between the target feature and the predicted outcome.</p>
+<p>The methodology involves creating a grid of values for the feature of interest, then systematically replacing that feature’s value in every data point while keeping other features unchanged. The model’s predictions are then averaged for each grid value, revealing how changes in the feature affect predictions on average. This approach makes PDPs <strong>model-agnostic</strong>, working equally well with tree-based models, neural networks, or any black-box algorithm.</p>
+<p>However, PDPs carry a critical assumption: <strong>feature independence</strong>. When features are correlated—a common occurrence in real-world data—PDPs can generate misleading visualizations by forcing the model to evaluate unrealistic feature combinations. For instance, a PDP might show predictions for “zero income with luxury spending,” combinations that never occur naturally. This limitation becomes particularly problematic in domains like healthcare or finance where feature correlations are strong and interpretability errors have serious consequences.</p>
+<p>Modern practitioners increasingly supplement PDPs with <a href="https://example.com/ale-plots" rel="noopener" target="_blank">Accumulated Local Effects (ALE) plots</a> for correlated features and uncertainty quantification techniques to provide confidence intervals around PDP estimates, addressing the statistical reliability concerns that have emerged in recent research.</p>
+<h3 id="individual-conditional-expectation-ice"><strong>Individual Conditional Expectation (ICE)</strong></h3>
+<p>While Partial Dependence Plots reveal average feature effects, <b><a href='http://"https://christophm.github.io/interpretable-ml-book/ice.html\"' rel="noopener" target="_blank">Individual Conditional Expectation (ICE)</a></b> plots expose the heterogeneous relationships hidden beneath these averages. Unlike PDPs that aggregate predictions across all instances, ICE plots show how each individual data point responds as a single feature varies, creating multiple overlapping curves rather than one averaged line.</p>
+<p>The mathematical foundation builds directly upon PDP methodology. For each observation <i>i</i> and feature <i>x<sub>j</sub></i>, ICE computes f(x<sub>j</sub>, x<sub>c</sub><sup>(i)</sup>) across a grid of x<sub>j</sub> values while holding all other features x<sub>c</sub> constant at their original values for that instance. This generates individual prediction trajectories that reveal subgroup behaviors PDPs might obscure through averaging.</p>
+<p>ICE plots excel at detecting <b>feature interactions</b> and <b>heterogeneous effects</b>. When PDP shows a flat line suggesting no relationship, ICE often reveals opposing trends—some instances increasing while others decrease—that cancel out in the average. This capability proves invaluable for identifying bias patterns, understanding model fairness across demographic groups, or debugging unexpected predictions for specific cases.</p>
+<p>Implementation requires generating multiple synthetic versions of each data point with only the target feature modified, then plotting all resulting prediction curves. <b>Centered ICE plots</b> enhance interpretability by subtracting each curve’s starting value, focusing attention on relative changes rather than absolute prediction levels. While computationally similar to PDP construction, ICE visualization can become cluttered with large datasets, typically requiring sampling or <b>aggregation techniques</b> for practical deployment.</p>
+<h3 id="local-interpretable-model-agnostic-explanations-lime"><strong>Local Interpretable Model-agnostic Explanations (LIME)</strong></h3>
+<p>While ICE plots reveal how individual instances respond to feature changes, <a href="https://github.com/marcotcr/lime" rel="noopener" target="_blank">Local Interpretable Model-agnostic Explanations (LIME)</a> takes a fundamentally different approach to understanding model predictions. Instead of examining feature variations globally, LIME explains <b>why</b> a model made a specific prediction for a particular instance by creating locally faithful approximations using interpretable models.</p>
+<p>LIME operates through strategic perturbation around the instance of interest. For tabular data, it samples from feature distributions while maintaining realistic value ranges. For text, it systematically removes words to observe prediction changes. For images, it masks superpixel regions to identify influential visual components. These perturbations generate a neighborhood dataset that LIME weights by proximity to the original instance.</p>
+<p>The technique then trains an <i>interpretable model</i>—typically sparse linear regression—on this weighted neighborhood data. The resulting coefficients reveal which features contribute positively or negatively to the specific prediction. This local approximation provides intuitive explanations: highlighted words in sentiment analysis, influential image regions in computer vision, or critical feature thresholds in tabular predictions.</p>
+<p>LIME’s model-agnostic nature makes it particularly valuable for <b>debugging individual predictions</b> and building stakeholder trust. Unlike ICE plots that show feature-prediction relationships across the dataset, LIME answers “Why did the model classify <i>this specific email</i> as spam?” by identifying the exact words or patterns that influenced that decision, making it indispensable for explaining high-stakes individual predictions in healthcare, finance, and legal applications.</p>
+<h3 id="shap-shapley-additive-explanations"><strong>SHAP (SHapley Additive exPlanations)</strong></h3>
+<p>While LIME operates on local neighborhoods, <a href="https://proceedings.neurips.cc/paper/2017/file/8a20a8621978632d76c43dfd28b67767-Paper.pdf" rel="noopener" target="_blank">SHAP (SHapley Additive exPlanations)</a> provides a unified theoretical framework rooted in <b>cooperative game theory</b>. Unlike approximation-based methods, SHAP guarantees mathematically consistent explanations by treating each feature as a “player” and the prediction as a cooperative “payout.” This framework satisfies three critical properties: <i>local accuracy</i> (feature attributions sum to the difference between prediction and baseline), <i>consistency</i> (features with increased contributions never receive decreased attribution), and <i>missingness</i> (unused features receive zero attribution). <a href="https://lundberg.github.io/" rel="noopener" target="_blank">TreeSHAP</a> enables efficient computation for tree-based models, while <b>KernelSHAP</b> provides model-agnostic explanations. SHAP’s visualizations—including force plots, summary plots, and dependence plots—offer both local and global interpretability insights, making it particularly valuable for high-stakes applications requiring regulatory compliance and stakeholder trust in machine learning decisions.</p>
+<h2 id="conclusions"><strong>Conclusions</strong></h2>
+<p>Model interpretability techniques provide essential insights into complex machine learning systems, each offering unique perspectives and advantages. While PDPs and ICE plots excel at visualizing feature impacts, LIME and SHAP provide detailed local explanations. Together, these tools enable practitioners to build more transparent, trustworthy, and effective AI systems.</p>
+
+</article>
+<div class="post-nav"><a href="/2025/08/20/defining-fidelity-risk-in-ai-document-processing/">&larr; Defining Fidelity Risk in AI Document Processing</a><a class="next" href="/2025/07/21/ai-transforming-banking-finance/">AI is Transforming Banking and Finance: Use Cases and Trends &rarr;</a></div>
+<a href="/blog/" class="back">&larr; Back to writing</a>
+</main>
+<footer>
+&copy; 2026 Sudhanshu Deo &middot; <a href="/privacy-policy/">Privacy</a> &middot; <a href="/blog/">Blog</a>
+</footer>
+</body>
+</html>
