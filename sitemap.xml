@@ -19,6 +19,12 @@
     <priority>0.3</priority>
   </url>
   <url>
+    <loc>https://sd-ai.co.uk/2026/11/21/what-trustees-actually-do/</loc>
+  <lastmod>2026-11-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://sd-ai.co.uk/2026/08/21/building-vector-rag-with-chromadb/</loc>
   <lastmod>2026-08-21</lastmod>
     <changefreq>monthly</changefreq>

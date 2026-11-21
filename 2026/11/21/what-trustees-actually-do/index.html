@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="Content-Signal" content="search=yes, ai-train=no, use=reference">
+<title>What Trustees Actually Do: Notes from Wheely Tots — Sudhanshu Deo</title>
+<meta name="description" content="A trustee at a small North London charity on what the job really involves: governance, safeguarding, and reading the accounts.">
+<link rel="canonical" href="https://sd-ai.co.uk/2026/11/21/what-trustees-actually-do/">
+<meta property="og:title" content="What Trustees Actually Do: Notes from Wheely Tots — Sudhanshu Deo">
+<meta property="og:description" content="A trustee at a small North London charity on what the job really involves: governance, safeguarding, and reading the accounts.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://sd-ai.co.uk/2026/11/21/what-trustees-actually-do/">
+<meta property="og:image" content="https://sd-ai.co.uk/photo.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --bg: #fafaf9;
+  --bg-elev: #ffffff;
+  --fg: #18181b;
+  --fg-muted: #71717a;
+  --fg-subtle: #a1a1aa;
+  --border: #e4e4e7;
+  --border-strong: #d4d4d8;
+  --accent: #6366f1;
+  --accent-hover: #4f46e5;
+  --accent-bg: #eef2ff;
+  --code-bg: #f4f4f5;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04);
+  --radius: 12px;
+  --max-w: 720px;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #09090b;
+    --bg-elev: #18181b;
+    --fg: #fafafa;
+    --fg-muted: #a1a1aa;
+    --fg-subtle: #71717a;
+    --border: #27272a;
+    --border-strong: #3f3f46;
+    --accent: #818cf8;
+    --accent-hover: #a5b4fc;
+    --accent-bg: #1e1b4b;
+    --code-bg: #18181b;
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--font);
+  color: var(--fg);
+  background: var(--bg);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-hover); }
+code { font-family: var(--mono); font-size: 0.875em; background: var(--code-bg); padding: 0.15em 0.35em; border-radius: 4px; }
+pre { background: var(--code-bg); padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 0 0 1.3rem; border: 1px solid var(--border); }
+pre code { background: none; padding: 0; font-size: 0.85em; }
+
+/* Layout */
+main { max-width: var(--max-w); margin: 0 auto; padding: 3rem 1.25rem 4rem; }
+
+/* Header */
+header {
+  position: sticky; top: 0; z-index: 10;
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+header .inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0.9rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+header a.name {
+  font-weight: 600;
+  color: var(--fg);
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+}
+header nav { display: flex; gap: 1.5rem; }
+header nav a {
+  color: var(--fg-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+header nav a:hover { color: var(--fg); }
+
+/* Article (blog post) */
+article header { background: none; backdrop-filter: none; border-bottom: none; position: static; }
+article h1 {
+  font-size: 2.1rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  margin: 0 0 0.5rem;
+  line-height: 1.2;
+}
+article .meta { color: var(--fg-subtle); font-size: 0.85rem; margin: 0 0 2rem; }
+article h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 2.5rem 0 0.75rem;
+  letter-spacing: -0.015em;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+article h3 { font-size: 1.1rem; font-weight: 600; margin: 2rem 0 0.5rem; }
+article p { margin: 0 0 1.3rem; font-size: 1rem; }
+article a { color: var(--accent); border-bottom: 1px solid var(--border); }
+article a:hover { color: var(--accent-hover); border-bottom-color: var(--accent); }
+article ul, article ol { padding-left: 1.5rem; margin: 0 0 1.3rem; }
+article li { margin-bottom: 0.4rem; }
+article blockquote {
+  border-left: 3px solid var(--accent);
+  margin: 1.5rem 0;
+  padding: 0.25rem 0 0.25rem 1.25rem;
+  color: var(--fg-muted);
+  font-style: italic;
+}
+article figure { margin: 1.5rem 0; }
+article figure img { width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border); display: block; }
+article figcaption { font-size: 0.82rem; color: var(--fg-subtle); margin-top: 0.5rem; text-align: center; line-height: 1.4; }
+article pre { background: var(--code-bg); padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 0 0 1.3rem; border: 1px solid var(--border); }
+article hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+/* Footer */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 2rem 1.25rem;
+  color: var(--fg-subtle);
+  font-size: 0.82rem;
+  text-align: center;
+  margin-top: 4rem;
+}
+footer a { color: var(--fg-muted); }
+footer a:hover { color: var(--accent); }
+
+/* Back link */
+.back {
+  display: block;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  color: var(--fg-muted);
+  font-size: 0.9rem;
+}
+.back:hover { color: var(--accent); }
+
+@media (max-width: 640px) {
+  article h1 { font-size: 1.5rem; line-height: 1.25; }
+  article .meta { margin-bottom: 1.5rem; }
+  article h2 { font-size: 1.2rem; margin: 2rem 0 0.6rem; }
+  article h3 { font-size: 1.02rem; }
+  article p { font-size: 0.98rem; margin: 0 0 1.1rem; }
+  article pre { padding: 0.85rem; font-size: 0.8rem; }
+  article blockquote { padding: 0.25rem 0 0.25rem 1rem; }
+  article figure img { border-radius: 6px; }
+}
+
+/* --- shared additions for rebuilt posts --- */
+article table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.92rem;
+  display: block;
+  overflow-x: auto;
+}
+article th, article td {
+  border: 1px solid var(--border);
+  padding: 0.55rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+article th { background: var(--bg-elev); font-weight: 600; }
+article tbody tr:nth-child(even) { background: color-mix(in srgb, var(--bg-elev) 55%, transparent); }
+article h4 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 0.4rem; }
+article h5 { font-size: 0.94rem; font-weight: 600; margin: 1.4rem 0 0.35rem; color: var(--fg-muted); }
+article img { max-width: 100%; height: auto; border-radius: 8px; }
+article .featured img { width: 100%; }
+article .toc {
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin: 0 0 2rem;
+  font-size: 0.92rem;
+}
+article .toc p, article .toc .toc-title { margin: 0 0 0.5rem; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--fg-subtle); }
+article .toc ul { margin: 0; padding-left: 1.1rem; }
+article .toc li { margin-bottom: 0.2rem; }
+article .toc a { border-bottom: none; }
+article .toc .toc-missing { color: var(--fg-subtle); font-style: italic; }
+article .lead { font-size: 1.06rem; color: var(--fg-muted); }
+article .post-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+article .post-nav a { color: var(--fg-muted); border-bottom: none; max-width: 45%; }
+article .post-nav a:hover { color: var(--accent); }
+article .post-nav .next { text-align: right; }
+
+</style>
+<meta property="article:published_time" content="2026-11-21">
+<meta name="author" content="Sudhanshu Deo">
+</head>
+<body>
+<header><div class="inner">
+<a href="/" class="name">Sudhanshu Deo</a>
+<nav><a href="/">Home</a><a href="/blog/">Blog</a><a href="/privacy-policy/">Privacy</a></nav>
+</div></header>
+<main>
+<article>
+<h1 id="top">What Trustees Actually Do: Notes from Wheely Tots</h1>
+<div class="meta"><time datetime="2026-11-21">21 November 2026</time> &middot; ~3 min read</div>
+
+
+
+<p><em>I am a trustee at Wheely Tots, a community charity in North London that gets families outdoors on bikes, on foot and in the bush. People ask me what the job involves, usually expecting something about signing cheques. It is not that.</em></p>
+<p>Wheely Tots is a small organisation. A board of five trustees, one chief executive, a handful of staff and about eighteen regular volunteers, plus corporate volunteers who turn up for sessions. That size is the point. There is no committee structure to hide behind, so every decision lands on the table in one room.</p>
+<h2 id="governance-is-mostly-deciding-what-not-to-do">Governance is mostly deciding what not to do</h2>
+<p>The legal job is set out plainly: agree the strategy, keep the charity on course, check that the money is used for the charitable purpose, and make sure we can account for ourselves. In practice that means reading a budget line by line, asking why a line was underspent, agreeing the annual report, and being the people who say no when a good idea does not fit the constitution or the money we have.</p>
+<p>It also means holding the chief executive to account without taking the work away from her. That balance has taken me longer to get right than I expected, and I am still not sure I have it.</p>
+<h2 id="safeguarding-is-not-paperwork">Safeguarding is not paperwork</h2>
+<p>We work with children and families in Haringey and Hackney. Where there are children, safeguarding belongs to all of us, not to one designated lead. In practice: DBS checks for everyone working with children, clear ratios and supervision on sessions, a reporting route that people actually know, training that gets done rather than ticked, and an honest record of the times something did not go to plan, so we can change the practice. Trustees do not deliver the sessions. We own the framework that makes them safe.</p>
+<h2 id="the-money-shapes-what-we-can-promise">The money shapes what we can promise</h2>
+<p>In the year to 30 April 2025 our income was £270,940, of which £237,736 came from charitable activities and £33,204 from donations and legacies. Expenditure was £207,197, giving a net income of £63,743 and £163,052 in funds carried forward. Trustees are unpaid, and I would not want it to be otherwise.</p>
+<p>Reading the accounts tells you more about a charity than any impact report will. Our income is mostly contracted work rather than spontaneous donations, which means a good deal of it is restricted to what the funder specified. That is not a problem, it is a fact about how a charity of our size is built, and it changes the question from "should we do this?" to "can we fund this, and does it fit what we were actually asked to do?"</p>
+<h2 id="the-part-nobody-warns-you-about">The part nobody warns you about</h2>
+<p>You will have to make decisions with incomplete information. You will read a report you cannot fully verify. You will sit in a meeting where you are unsure, and still have to vote. My answer to that is to say plainly in the room what I do not know, and to make sure the board is the place where uncertainty gets examined rather than smoothed over into confidence.</p>
+<p>If you are thinking about joining a board, go to a session first and watch how the questions get asked. Good trustees are not the loudest people in the room. They are the ones who make the organisation harder to fool.</p>
+<p>More about the charity: <a href="https://wheelytots.com" rel="noopener" target="_blank">wheelytots.com</a>. Registered charity number 1161237.</p>
+
+</article>
+<div class="post-nav"><span></span><a class="next" href="/2026/08/21/building-vector-rag-with-chromadb/">Building a Vector-Based RAG Playground with ChromaDB &rarr;</a></div>
+<a href="/blog/" class="back">&larr; Back to writing</a>
+</main>
+<footer>
+&copy; 2026 Sudhanshu Deo &middot; <a href="/privacy-policy/">Privacy</a> &middot; <a href="/blog/">Blog</a>
+</footer>
+</body>
+</html>
