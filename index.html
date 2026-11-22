@@ -127,30 +127,20 @@ header nav a:hover { color: var(--fg); }
   transform: translateY(-4px) scale(1.02);
   box-shadow: 0 12px 32px rgba(99,102,241,0.28);
 }
+/* The source photo is 1600x1519 and the head occupies the upper-middle of
+   the frame, so object-fit:cover on the full image left the head tiny in a
+   120px box. The photo is instead sized and offset so the 120px tile shows a
+   950x950 source window centred on the face (x=193..1143, y=0..950). The eyes
+   are the ones in the photograph - no drawn pupil overlay. */
 .avatar-photo {
   display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Eye Tracking Overlay */
-.avatar-overlay {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 2;
-}
-.avatar-overlay .pupil {
-  transition: transform 0.08s ease-out;
-  fill: #1c1c20 !important; /* Force visible dark fill in both light and dark mode */
-}
-.avatar-overlay .pupil-mobile { display: none; }
-@media (max-width: 640px) {
-  .avatar-overlay .pupil-desktop { display: none; }
-  .avatar-overlay .pupil-mobile  { display: inline; }
+  top: 0;
+  left: -24.38px;
+  width: 202.11px;
+  height: 191.87px;
+  max-width: none;
+  object-fit: cover;
 }
 
 .hero h1 {
@@ -332,24 +322,14 @@ footer {
 
 <main>
 <section class="hero animate-in delay-1">
-<div class="avatar avatar-track">
+<div class="avatar">
   <picture>
     <source srcset="https://sd-ai.co.uk/photo.webp 1x, https://sd-ai.co.uk/photo@2x.webp 2x" type="image/webp">
     <img class="avatar-photo" src="https://sd-ai.co.uk/photo.jpg"
          srcset="https://sd-ai.co.uk/photo.jpg 1x, https://sd-ai.co.uk/photo@2x.jpg 2x"
          alt="Sudhanshu Deo" width="120" height="120">
   </picture>
-  <!-- Interactive SVG Eyes — CALIBRATED TO NEW PHOTO -->
-  <svg class="avatar-overlay" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-    <!-- Left Eye -->
-    <circle class="pupil pupil-desktop" cx="43.1" cy="36.6" r="1.3" />
-    <circle class="pupil pupil-mobile"  cx="43.1" cy="36.6" r="1.3" />
-
-    <!-- Right Eye -->
-    <circle class="pupil pupil-desktop" cx="57.0" cy="34.1" r="1.3" />
-    <circle class="pupil pupil-mobile"  cx="57.0" cy="34.1" r="1.3" />
-    
-  </svg>
+  <!-- Cropped to the face via CSS; the pupils are the ones in the photograph -->
 </div>
 <div class="info">
   <h1>Sudhanshu Deo</h1>
@@ -438,56 +418,6 @@ footer {
   }, observerOptions);
 
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-  // --- Eye Tracking Logic ---
-  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  
-  const avatar = document.querySelector('.avatar-track');
-  if (!avatar) return;
-
-  const MAX_OFFSET = 1.3; // Strictly constrained to stay within eyes
-  const SMOOTH = 0.08; // Smoother movement
-  const MAX_DIST = 400;
-  const pupils = avatar.querySelectorAll('.pupil');
-  
-  let tx = 0, ty = 0, cx = 0, cy = 0, raf = null;
-
-  function step(){
-    cx += (tx - cx) * SMOOTH;
-    cy += (ty - cy) * SMOOTH;
-    const t = `translate(${cx.toFixed(2)} ${cy.toFixed(2)})`;
-    pupils.forEach(p => p.setAttribute('transform', t));
-    
-    if (Math.abs(tx - cx) > 0.01 || Math.abs(ty - cy) > 0.01){
-      raf = requestAnimationFrame(step);
-    } else {
-      raf = null;
-    }
-  }
-
-  function onMove(e){
-  // Support both touch and mouse coordinates
-  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
-  const rect = avatar.getBoundingClientRect();
-  const ccx = rect.left + rect.width / 2;
-  const ccy = rect.top + rect.height / 2;
-  const dx = clientX - ccx;
-  const dy = clientY - ccy;
-  const d = Math.sqrt(dx*dx + dy*dy);
-  
-  const factor = Math.min(d / MAX_DIST, 1);
-  tx = (dx / (d || 1)) * MAX_OFFSET * factor;
-  ty = (dy / (d || 1)) * MAX_OFFSET * factor;
-  
-  if (!raf) raf = requestAnimationFrame(step);
-}
-
-// Listen for both desktop mouse movement and mobile touches
-document.addEventListener('mousemove', onMove, { passive: true });
-document.addEventListener('touchstart', onMove, { passive: true });
-document.addEventListener('touchmove', onMove, { passive: true });
 })();
 </script>
 </body>
